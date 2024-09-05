@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->unsignedBigInteger('user_type_id')->nullable();
-            $table->integer('location');
+            $table->string('location');
             $table->timestamps();
 
             // Indexes
