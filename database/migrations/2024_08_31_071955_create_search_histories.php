@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('searched_at')->nullable(); 
             $table->timestamps();
 
-             // Index
+            // Index
             $table->index('user_id');
 
             // Foreign key
