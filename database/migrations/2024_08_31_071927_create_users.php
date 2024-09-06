@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->unsignedBigInteger('user_type_id')->nullable();
+            $table->foreignId('canton_id');
+            $table->foreignId('district_id');
             $table->string('location');
             $table->timestamps();
 
