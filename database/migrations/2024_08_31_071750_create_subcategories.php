@@ -11,20 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('subcategories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->unsignedBigInteger('user_type_id')->nullable();
-            $table->string('location');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->timestamps();
 
             // Indexes
-            $table->index('user_type_id');
+            $table->index('category_id');
 
             // Foreign keys
-            $table->foreign('user_type_id')->references('id')->on('user_types')->onDelete('set null');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
+            
+ 
         });
     }
 
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('subcategories');
     }
 };

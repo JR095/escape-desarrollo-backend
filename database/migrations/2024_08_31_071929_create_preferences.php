@@ -13,8 +13,20 @@ return new class extends Migration
     {
         Schema::create('preferences', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
+
+            // Foreign Key
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+
+            // Indexes
+            $table->index('user_id');
+            $table->index('category_id');
+
+            // Restriccion
+            $table->unique(['user_id', 'category_id']);
         });
     }
 
@@ -26,3 +38,5 @@ return new class extends Migration
         Schema::dropIfExists('preferences');
     }
 };
+
+

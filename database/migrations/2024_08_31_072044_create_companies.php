@@ -13,27 +13,27 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->string('phone_number');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->string('email')->unique();
             $table->string('description')->nullable();
             $table->string('image')->nullable();
-            $table->unsignedBigInteger('location_id')->nullable();
+            $table->unsignedBigInteger('canton_id')->nullable();
+            $table->unsignedBigInteger('district_id')->nullable();
             $table->string('address')->nullable();
-            $table->timestamps();
             $table->bigInteger('followers_count')->default(0);
-        
+            $table->timestamps();
+            
             // Indexes
-            $table->index('user_id');
             $table->index('category_id');
-            $table->index('location_id');
+            $table->index('canton_id');
+            $table->index('district_id');
 
             // Foreign Keys
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
-            $table->foreign('location_id')->references('id')->on('locations')->onDelete('set null');
+            $table->foreign('canton_id')->references('id')->on('cantons')->onDelete('set null');
+            $table->foreign('district_id')->references('id')->on('districts')->onDelete('set null');
         });
     }
 
