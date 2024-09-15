@@ -15,18 +15,20 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->unsignedBigInteger('user_type_id')->nullable();
-            $table->foreignId('canton_id');
-            $table->foreignId('district_id');
-            $table->string('location');
+            $table->rememberToken();
+            //$table->unsignedBigInteger('user_type_id')->nullable();
+            //$table->foreignId('canton_id');
+            //$table->foreignId('district_id');
+            //$table->string('location');
             $table->timestamps();
 
             // Indexes
-            $table->index('user_type_id');
+            //$table->index('user_type_id');
 
             // Foreign keys
-            $table->foreign('user_type_id')->references('id')->on('user_types')->onDelete('set null');
+            //$table->foreign('user_type_id')->references('id')->on('user_types')->onDelete('set null');
         });
     }
 
