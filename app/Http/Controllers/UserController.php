@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules;
 
-class LoginController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -65,22 +62,23 @@ class LoginController extends Controller
         //
     }
 
-    public function login(Request $request) 
+    public function sendResetLinkEmail(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $request->validate(['email' => 'required|email']);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
 
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => Auth::user(),
-            ], 200);
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json(['message' => __('passwords.sent')], 200);
+            } else {
+                return response()->json(['message' => __('passwords.user')], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending reset link: '.$e->getMessage());
+            return response()->json(['message' => 'An error occurred while sending the reset link'], 500);
         }
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 }
