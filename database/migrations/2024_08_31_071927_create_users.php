@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->double('latitude', 18, 15)->nullable();
+            $table->double('longitude', 18, 15)->nullable();
             //$table->unsignedBigInteger('user_type_id')->nullable();
             //$table->foreignId('canton_id');
             //$table->foreignId('district_id');

@@ -34,6 +34,8 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed'],
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             //'location' => 'required|string',
         ]);
 
@@ -41,6 +43,8 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             //'user_type_id' => 2,
             //'location' => $request->location,
             //'social_login_provider' => 'google',
