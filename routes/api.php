@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisteredUserController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SearchController;
 
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::post('/login', [LoginController::class, 'login']);
 Route::get('/companies/search', [CompanyController::class, 'search']);
 Route::post('/search/store', [SearchController::class, 'store']);
 Route::get('/searches/recent', [SearchController::class, 'recent']);
