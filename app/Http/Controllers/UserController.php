@@ -62,6 +62,7 @@ class UserController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required',
+                'description' => 'required',
             ]);
 
             $user->update($validatedData);

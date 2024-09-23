@@ -37,6 +37,7 @@ class RegisteredUserController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             //'location' => 'required|string',
+            'description' => 'string',
         ]);
 
         $user = User::create([
@@ -45,6 +46,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'description' => $request->description,
             //'user_type_id' => 2,
             //'location' => $request->location,
             //'social_login_provider' => 'google',
