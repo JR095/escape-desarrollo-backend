@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ use App\Http\Controllers\SearchController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [LoginController::class, 'login']);
@@ -29,3 +31,6 @@ Route::post('/search/store', [SearchController::class, 'store']);
 Route::get('/searches/recent', [SearchController::class, 'recent']);
 Route::get('/companies/suggestions', [SearchController::class, 'getSuggestions']);
 Route::delete('/search/destroy/{id}', [SearchController::class, 'destroy']);
+
+Route::post('/update-user', [UserController::class, 'update']);
+Route::post('/change-password', [UserController::class, 'changePassword']);
