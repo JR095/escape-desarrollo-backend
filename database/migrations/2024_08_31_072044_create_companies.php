@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone_number');
+            $table->foreignId('user_type_id');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->string('email')->unique();
             $table->string('description')->nullable();

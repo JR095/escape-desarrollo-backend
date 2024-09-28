@@ -15,28 +15,23 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->double('latitude', 18, 15)->nullable();
             $table->double('longitude', 18, 15)->nullable();
-            $table->string('description')->nullable();
-            //$table->unsignedBigInteger('user_type_id')->nullable();
-            //$table->foreignId('canton_id');
-            //$table->foreignId('district_id');
-            //$table->string('location');
+            $table->foreignId('user_type_id');
+            $table->foreignId('canton_id');
+            $table->foreignId('district_id');
+            $table->string('preferences_1');
+            $table->string('preferences_2');
+            $table->string('preferences_3');
             $table->timestamps();
-
-            // Indexes
-            //$table->index('user_type_id');
-
-            // Foreign keys
-            //$table->foreign('user_type_id')->references('id')->on('user_types')->onDelete('set null');
         });
     }
 
     /**
      * Reverse the migrations.
+     * 
      */
     public function down(): void
     {
