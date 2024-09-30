@@ -37,7 +37,12 @@ class RegisteredUserController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             //'location' => 'required|string',
-            'description' => 'string',
+            //'description' => 'string',
+            'canton_id' => 'required',
+            'district_id' => 'required',
+            'preferences_1' => 'required',
+            'preferences_2' => 'required',
+            'preferences_3' => 'required',
         ]);
 
         $user = User::create([
@@ -46,7 +51,13 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'description' => $request->description,
+            //'description' => $request->description,
+            'user_type_id' => 2,
+            'canton_id' => $request->canton_id,
+            'district_id' => $request->district_id,
+            'preferences_1' => $request->preferences_1,
+            'preferences_2' => $request->preferences_2,
+            'preferences_3' => $request->preferences_3,
             //'user_type_id' => 2,
             //'location' => $request->location,
             //'social_login_provider' => 'google',

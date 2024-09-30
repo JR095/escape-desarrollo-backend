@@ -19,9 +19,9 @@ return new class extends Migration
             $table->rememberToken();
             $table->double('latitude', 18, 15)->nullable();
             $table->double('longitude', 18, 15)->nullable();
-            $table->foreignId('user_type_id');
-            $table->foreignId('canton_id');
-            $table->foreignId('district_id');
+            $table->foreignId('user_type_id')->constrained();
+            $table->foreignId('canton_id')->constrained();
+            $table->foreignId('district_id')->constrained();
             $table->string('preferences_1');
             $table->string('preferences_2');
             $table->string('preferences_3');

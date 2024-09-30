@@ -24,7 +24,12 @@ class User extends Authenticatable
         'password',
         'latitude',
         'longitude',
-        'description'
+        'user_type_id',
+        'canton_id',
+        'district_id',
+        'preferences_1',
+        'preferences_2',
+        'preferences_3'
     ];
 
     /**
