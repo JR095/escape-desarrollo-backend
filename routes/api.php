@@ -41,3 +41,4 @@ Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])-
 Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
+Route::get('/posts', [DailyPostController::class, 'index']);

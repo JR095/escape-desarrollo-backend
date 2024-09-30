@@ -13,7 +13,11 @@ class DailyPostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Daily_post::select('id', 'description')
+            ->with(['files:id,file_path'])
+            ->get();
+
+        return response()->json($posts);
     }
 
     /**

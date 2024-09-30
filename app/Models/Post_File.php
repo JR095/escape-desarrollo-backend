@@ -15,8 +15,7 @@ class Post_File extends Model
         'file_type',
     ];
 
-    // Puedes especificar el nombre de la tabla si es diferente de la convención de Laravel
-    protected $table = 'post_files'; // Asegúrate de que el nombre sea correcto
+    protected $table = 'post_files';
 
     public function post()
     {
