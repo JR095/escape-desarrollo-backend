@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('daily_posts', function (Blueprint $table) {
+        Schema::create('post_files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id')->nullable();
-            $table->string('description');
+            $table->unsignedBigInteger('daily_post_id');
+            $table->string('file_path'); 
+            $table->string('file_type'); 
             $table->timestamps();
 
             // Index
-            $table->index('company_id');
+            $table->index('daily_post_id');
 
             // Foreign Key
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('set null');
+            $table->foreign('daily_post_id')->references('id')->on('daily_posts')->onDelete('cascade');
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('daily_posts');
+        Schema::dropIfExists('post_files');
     }
 };

@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DailyPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,5 @@ Route::post('/change-password', [UserController::class, 'changePassword']);
 Route::post('/forgot/password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])->name('password.reset.form');
 Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
+
+Route::post('/create/post', [DailyPostController::class, 'store']);
