@@ -14,7 +14,7 @@ class DailyPostController extends Controller
     public function index()
     {
         $posts = Daily_post::select('id', 'description')
-            ->with(['files:id,file_path'])
+            ->with(['files:id,daily_post_id,file_path'])
             ->get();
 
         return response()->json($posts);
