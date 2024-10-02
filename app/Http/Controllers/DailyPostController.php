@@ -32,36 +32,36 @@ class DailyPostController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'description' => 'required|string',
-        'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
-    ]);
-
-    try {
-        $post = Daily_post::create([
-            'description' => $request->description,
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
         ]);
 
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $filePath = $file->store('posts', 'public');
-                $fileType = $file->getClientMimeType();
+        try {
+            $post = Daily_post::create([
+                'description' => $request->description,
+            ]);
 
-                Post_File::create([
-                    'daily_post_id' => $post->id,
-                    'file_path' => $filePath,
-                    'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
-                ]);
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $filePath = $file->store('posts', 'public');
+                    $fileType = $file->getClientMimeType();
+
+                    Post_File::create([
+                        'daily_post_id' => $post->id,
+                        'file_path' => $filePath,
+                        'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
+                    ]);
+                }
             }
-        }
 
-        return response()->json(['message' => 'Publicación creada con éxito.'], 201);
-    } catch (\Exception $e) {
-        \Log::error('Error al crear la publicación: ' . $e->getMessage()); 
-        return response()->json(['error' => 'Error al crear la publicación.'], 500);
+            return response()->json(['message' => 'Publicación creada con éxito.'], 201);
+        } catch (\Exception $e) {
+            \Log::error('Error al crear la publicación: ' . $e->getMessage()); 
+            return response()->json(['error' => 'Error al crear la publicación.'], 500);
+        }
     }
-}
 
 
     /**
@@ -69,7 +69,7 @@ class DailyPostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**
@@ -83,10 +83,46 @@ class DailyPostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(Request $request, $id) 
+{
+    $request->validate([
+        'description' => 'required|string',
+        'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
+    ]);
+
+    try {
+        $post = Daily_post::findOrFail($id);
+
+        // Actualiza la descripción
+        $post->update([
+            'description' => $request->description,
+        ]);
+
+        // Maneja los archivos
+        if ($request->hasFile('files')) {
+            // Elimina los archivos existentes
+            Post_File::where('daily_post_id', $post->id)->delete();
+
+            // Almacena los nuevos archivos
+            foreach ($request->file('files') as $file) {
+                $filePath = $file->store('posts', 'public');
+                $fileType = $file->getClientMimeType();
+
+                Post_File::create([
+                    'daily_post_id' => $post->id,
+                    'file_path' => $filePath,
+                    'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Publicación actualizada con éxito.'], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error al actualizar la publicación: ' . $e->getMessage());
+        return response()->json(['error' => 'Error al actualizar la publicación.'], 500);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

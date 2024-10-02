@@ -42,3 +42,5 @@ Route::post('/reset/password', [UserController::class, 'reset'])->name('password
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
+Route::put('/update/post/{id}', [DailyPostController::class, 'update']);
+Route::get('/post/{id}', [DailyPostController::class, 'show']);
