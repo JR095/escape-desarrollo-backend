@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DailyPostController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,13 @@ Route::post('/search/store', [SearchController::class, 'store']);
 Route::get('/searches/recent', [SearchController::class, 'recent']);
 Route::get('/companies/suggestions', [SearchController::class, 'getSuggestions']);
 Route::delete('/search/destroy/{id}', [SearchController::class, 'destroy']);
+
+Route::get('/categories', [CategoryController::class, 'categories']);
+Route::get('/subcategories/{id}', [CategoryController::class, 'show']);
+Route::get('/canton', [CategoryController::class, 'canton']);
+Route::get('/district/{id}', [CategoryController::class, 'district']);
+
+
 
 Route::post('/update-user', [UserController::class, 'update']);
 Route::post('/change-password', [UserController::class, 'changePassword']);
