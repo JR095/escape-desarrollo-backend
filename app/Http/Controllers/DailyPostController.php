@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Daily_post;
 use App\Models\Post_File;
+use Illuminate\Support\Facades\Storage;
 
 class DailyPostController extends Controller
 {
@@ -14,7 +15,7 @@ class DailyPostController extends Controller
     public function index()
     {
         $posts = Daily_post::select('id', 'description')
-            ->with(['files:id,daily_post_id,file_path'])
+            ->with(['files:id,daily_post_id,file_path,file_type'])
             ->get();
 
         return response()->json($posts);
@@ -44,8 +45,12 @@ class DailyPostController extends Controller
             ]);
 
             if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $filePath = $file->store('posts', 'public');
+                    foreach ($request->file('files') as $file) {
+                    $originalFileName = str_replace(' ', '_', $file->getClientOriginalName());
+                    $timestamp = time();
+                    $uniqueFileName = $timestamp . '_' . $originalFileName;
+
+                    $filePath = $file->storeAs('posts', $uniqueFileName, 'public');
                     $fileType = $file->getClientMimeType();
 
                     Post_File::create([
@@ -67,9 +72,18 @@ class DailyPostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        
+        $post = Daily_post::select('id', 'description')
+            ->with(['files:id,daily_post_id,file_path,file_type'])
+            ->where('id', $id)
+            ->first();
+
+        if (!$post) {
+            return response()->json(['message' => 'Publicación no encontrada.'], 404);
+        }
+
+        return response()->json($post);
     }
 
     /**
@@ -83,46 +97,50 @@ class DailyPostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) 
+    public function update(Request $request, $id)
 {
     $request->validate([
         'description' => 'required|string',
-        'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
+        'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480', // archivos opcionales
     ]);
 
-    try {
-        $post = Daily_post::findOrFail($id);
+    $post = Daily_post::find($id);
+    if (!$post) {
+        return response()->json(['message' => 'Publicación no encontrada.'], 404);
+    }
 
-        // Actualiza la descripción
-        $post->update([
-            'description' => $request->description,
-        ]);
+    $post->description = $request->description;
+    $post->save();
 
-        // Maneja los archivos
-        if ($request->hasFile('files')) {
-            // Elimina los archivos existentes
-            Post_File::where('daily_post_id', $post->id)->delete();
+    if ($request->hasFile('files')) {
+        $oldFiles = Post_File::where('daily_post_id', $post->id)->get();
 
-            // Almacena los nuevos archivos
-            foreach ($request->file('files') as $file) {
-                $filePath = $file->store('posts', 'public');
-                $fileType = $file->getClientMimeType();
-
-                Post_File::create([
-                    'daily_post_id' => $post->id,
-                    'file_path' => $filePath,
-                    'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
-                ]);
-            }
+        foreach ($oldFiles as $oldFile) {
+            Storage::disk('public')->delete($oldFile->file_path);
+            $oldFile->delete();
         }
 
-        return response()->json(['message' => 'Publicación actualizada con éxito.'], 200);
-    } catch (\Exception $e) {
-        \Log::error('Error al actualizar la publicación: ' . $e->getMessage());
-        return response()->json(['error' => 'Error al actualizar la publicación.'], 500);
-    }
-}
+        foreach ($request->file('files') as $file) {
+            $originalFileName = str_replace(' ', '_', $file->getClientOriginalName());
+            $timestamp = time();
+            $uniqueFileName = $timestamp . '_' . $originalFileName;
 
+            $filePath = $file->storeAs('posts', $uniqueFileName, 'public');
+            $fileType = $file->getClientMimeType();
+
+            Post_File::create([
+                'daily_post_id' => $post->id,
+                'file_path' => $filePath,
+                'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
+            ]);
+        }
+    }
+
+    return response()->json([
+        'message' => 'Publicación actualizada con éxito.',
+        'post' => $post,
+    ]);
+}
 
     /**
      * Remove the specified resource from storage.
