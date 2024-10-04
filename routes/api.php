@@ -39,6 +39,10 @@ Route::get('/subcategories/{id}', [CategoryController::class, 'show']);
 Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
 
+Route::get('/companies/{id}', [CompanyController::class, 'show']);
+Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
+Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
+
 
 
 Route::post('/update-user', [UserController::class, 'update']);
