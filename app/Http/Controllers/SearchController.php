@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Search_history;
 use App\Models\Company;
 
+
 class SearchController extends Controller
 {
     
@@ -76,5 +77,8 @@ class SearchController extends Controller
             return response()->json(['message' => 'Búsqueda no encontrada.'], 404);
         }
     }
+
+ 
+
 
 }

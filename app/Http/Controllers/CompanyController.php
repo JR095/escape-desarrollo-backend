@@ -34,9 +34,85 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
         //
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'companies.phone_number',
+            'companies.user_type_id',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
+            'companies.email',
+            'companies.description',
+            'companies.image',
+            'cantons.name as canton_id',
+            'districts.name as district_id',
+            'companies.address',
+            'companies.followers_count',
+        )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
+        ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->where('companies.id', $id)
+        ->get();
+    
+        return $companies;
+        
+    }
+
+    public function categoryFilter($id){
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'companies.phone_number',
+            'companies.user_type_id',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
+            'companies.email',
+            'companies.description',
+            'companies.image',
+            'cantons.name as canton_id',
+            'districts.name as district_id',
+            'companies.address',
+            'companies.followers_count',
+        )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
+        ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->where('companies.category_id', $id)
+        ->get();
+    
+        return $companies;
+    }
+
+    public function subCategoryFilter($id){
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'companies.phone_number',
+            'companies.user_type_id',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
+            'companies.email',
+            'companies.description',
+            'companies.image',
+            'cantons.name as canton_id',
+            'districts.name as district_id',
+            'companies.address',
+            'companies.followers_count',
+        )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
+        ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->where('companies.sub_categories_id', $id)
+        ->get();
+    
+        return $companies;
     }
 
     /**
