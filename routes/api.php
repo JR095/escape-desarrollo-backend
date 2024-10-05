@@ -44,3 +44,4 @@ Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
 Route::post('/update/post/{id}', [DailyPostController::class, 'update']);
 Route::get('/posts/{id}', [DailyPostController::class, 'show']);
+Route::delete('/delete/post/{id}', [DailyPostController::class, 'destroy']);

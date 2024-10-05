@@ -98,55 +98,72 @@ class DailyPostController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'description' => 'required|string',
-        'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480', // archivos opcionales
-    ]);
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
+        ]);
 
-    $post = Daily_post::find($id);
-    if (!$post) {
-        return response()->json(['message' => 'Publicación no encontrada.'], 404);
-    }
-
-    $post->description = $request->description;
-    $post->save();
-
-    if ($request->hasFile('files')) {
-        $oldFiles = Post_File::where('daily_post_id', $post->id)->get();
-
-        foreach ($oldFiles as $oldFile) {
-            Storage::disk('public')->delete($oldFile->file_path);
-            $oldFile->delete();
+        $post = Daily_post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Publicación no encontrada.'], 404);
         }
 
-        foreach ($request->file('files') as $file) {
-            $originalFileName = str_replace(' ', '_', $file->getClientOriginalName());
-            $timestamp = time();
-            $uniqueFileName = $timestamp . '_' . $originalFileName;
+        $post->description = $request->description;
+        $post->save();
 
-            $filePath = $file->storeAs('posts', $uniqueFileName, 'public');
-            $fileType = $file->getClientMimeType();
+        if ($request->hasFile('files')) {
+            $oldFiles = Post_File::where('daily_post_id', $post->id)->get();
 
-            Post_File::create([
-                'daily_post_id' => $post->id,
-                'file_path' => $filePath,
-                'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
-            ]);
+            foreach ($oldFiles as $oldFile) {
+                Storage::disk('public')->delete($oldFile->file_path);
+                $oldFile->delete();
+            }
+
+            foreach ($request->file('files') as $file) {
+                $originalFileName = str_replace(' ', '_', $file->getClientOriginalName());
+                $timestamp = time();
+                $uniqueFileName = $timestamp . '_' . $originalFileName;
+
+                $filePath = $file->storeAs('posts', $uniqueFileName, 'public');
+                $fileType = $file->getClientMimeType();
+
+                Post_File::create([
+                    'daily_post_id' => $post->id,
+                    'file_path' => $filePath,
+                    'file_type' => strpos($fileType, 'video') !== false ? 'video' : 'image',
+                ]);
+            }
         }
-    }
 
-    return response()->json([
-        'message' => 'Publicación actualizada con éxito.',
-        'post' => $post,
-    ]);
-}
+        return response()->json([
+            'message' => 'Publicación actualizada con éxito.',
+            'post' => $post,
+        ]);
+    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $post = Daily_post::find($id);
+        if ($post) {
+            $files = $post->files;
+
+            foreach ($files as $file) {
+                $filePath = public_path('storage/' . $file->file_path);
+                if (file_exists($filePath)) {
+                    unlink($filePath); 
+                }
+                $file->delete();
+            }
+            $post->delete();
+
+            return response()->json(['message' => 'Publicación e imágenes relacionadas eliminadas con éxito.'], 200);
+        } else {
+            return response()->json(['message' => 'Publicación no encontrada.'], 404);
+        }
     }
+
 }
