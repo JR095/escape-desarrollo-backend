@@ -9,6 +9,8 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DailyPostController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RegisteredCompanyController;
+use App\Http\Controllers\LoginCompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +25,9 @@ use App\Http\Controllers\CategoryController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::middleware('auth:sanctum')->get('/company', function (Request $request) {
+    return $request->company();
 });
 Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
 
@@ -56,3 +61,9 @@ Route::post('/reset/password', [UserController::class, 'reset'])->name('password
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
+Route::post('/update/post/{id}', [DailyPostController::class, 'update']);
+Route::get('/posts/{id}', [DailyPostController::class, 'show']);
+Route::delete('/delete/post/{id}', [DailyPostController::class, 'destroy']);
+
+Route::post('/company-register', [RegisteredCompanyController::class, 'store']);
+Route::post('/company-login', [LoginCompanyController::class, 'login']);

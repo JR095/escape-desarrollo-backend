@@ -19,14 +19,15 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained();
             $table->foreignId('sub_categories_id')->constrained();
             $table->string('email')->unique();
-            $table->string('description')->nullable();
+            $table->string('description');
             $table->string('image')->nullable();
             $table->foreignId('canton_id')->constrained();
             $table->foreignId('district_id')->constrained();
-            $table->string('address')->nullable();
-            $table->bigInteger('followers_count')->default(0);
+            $table->string('address');
+            $table->bigInteger('followers_count')->default(0)->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
-
         });
     }
 
