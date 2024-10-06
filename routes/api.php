@@ -45,6 +45,7 @@ Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
 
 Route::get('/companies', [CompanyController::class, 'show']);
+Route::get('/company/{id}', [CompanyController::class, 'companyShow']);
 Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
 Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
 
