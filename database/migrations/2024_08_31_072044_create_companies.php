@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->foreignId('canton_id')->constrained();
             $table->foreignId('district_id')->constrained();
-            $table->string('address');
+            $table->double('latitude', 18, 15)->nullable();
+            $table->double('longitude', 18, 15)->nullable();
             $table->bigInteger('followers_count')->default(0)->nullable();
             $table->string('password');
             $table->rememberToken();
