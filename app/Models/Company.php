@@ -30,7 +30,8 @@ class Company extends Authenticatable
         'image',
         'canton_id',
         'district_id',
-        'address',
+        'latitude',
+        'longitude',
         'followers_count',
         'password'
     ];
