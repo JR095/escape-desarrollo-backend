@@ -58,6 +58,10 @@ class CompanyController extends Controller
         ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
         ->get();
+
+        foreach ($companies as $company) {
+            $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+        }
         
         return $companies;
         
@@ -171,6 +175,10 @@ class CompanyController extends Controller
         ->join('districts', 'companies.district_id', '=', 'districts.id')
         ->where('companies.id', $id)
         ->get();
+
+        foreach ( $companies as $activity) {
+            $activity->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$activity->image;
+        }
     
         return $companies;
         

@@ -17,8 +17,8 @@ class CategorySeeder extends Seeder
        Category::create(['name' => 'Comida y Bebida']);
        Category::create(['name' => 'Compras']);
        Category::create(['name' => 'Actividades al Aire Libre']);
-       Category::create(['name' => 'Entretenimiento']);
        Category::create(['name' => 'Cultura']);
+       Category::create(['name' => 'Entretenimiento']);
        Category::create(['name' => 'Bienestar y Relajación']);
         
     }
