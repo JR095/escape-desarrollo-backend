@@ -66,6 +66,7 @@ Route::get('/posts', [DailyPostController::class, 'index']);
 Route::post('/update/post/{id}', [DailyPostController::class, 'update']);
 Route::get('/posts/{id}', [DailyPostController::class, 'show']);
 Route::delete('/delete/post/{id}', [DailyPostController::class, 'destroy']);
+Route::get('/company-posts', [DailyPostController::class, 'getCompanyPosts']);
 
 Route::post('/company-register', [RegisteredCompanyController::class, 'store']);
 Route::post('/company-login', [LoginCompanyController::class, 'login']);

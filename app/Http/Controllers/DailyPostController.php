@@ -15,9 +15,37 @@ class DailyPostController extends Controller
      */
     public function index()
     {
-        $posts = Daily_post::select('id', 'description')
-            ->with(['files:id,daily_post_id,file_path,file_type'])
-            ->get();
+        $posts = Daily_post::with([
+            'files:id,daily_post_id,file_path,file_type', 
+            'company:id,name,canton_id,district_id,category_id',
+            'company.canton:id,name',
+            'company.district:id,name',
+            'company.category:id,name',
+        ])
+        ->select('id', 'description', 'company_id')
+        ->get();
+
+    return response()->json($posts);
+    }
+
+    public function getCompanyPosts()
+    {
+        if (!Auth::guard('company')->check()) {
+            return response()->json(['error' => 'No está autenticado como compañía.'], 401);
+        }
+
+        $companyId = Auth::guard('company')->id();
+
+        $posts = Daily_post::with([
+            'files:id,daily_post_id,file_path,file_type',
+            'company:id,name,canton_id,district_id,category_id',
+            'company.canton:id,name',
+            'company.district:id,name',
+            'company.category:id,name',
+        ])
+        ->where('company_id', $companyId)
+        ->select('id', 'description', 'company_id')
+        ->get();
 
         return response()->json($posts);
     }
