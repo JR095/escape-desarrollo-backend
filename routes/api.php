@@ -11,7 +11,8 @@ use App\Http\Controllers\DailyPostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegisteredCompanyController;
 use App\Http\Controllers\LoginCompanyController;
-
+use App\Http\Controllers\CantonController;
+use App\Http\Controllers\DistrictController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -70,3 +71,6 @@ Route::get('/company-posts', [DailyPostController::class, 'getCompanyPosts']);
 
 Route::post('/company-register', [RegisteredCompanyController::class, 'store']);
 Route::post('/company-login', [LoginCompanyController::class, 'login']);
+
+Route::get('/cantons', [CantonController::class, 'index']);
+Route::get('/cantons/{id}/districts', [DistrictController::class, 'getByCanton']);

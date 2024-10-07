@@ -59,19 +59,28 @@ class UserController extends Controller
     {
         try {
             $user = auth()->user();
+
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required',
-                'description' => 'required',
+                'email' => 'required|email',
+                'canton' => 'required|exists:cantons,id', 
+                'distrito' => 'required|exists:districts,id', 
             ]);
 
-            $user->update($validatedData);
+            $user->update([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'canton_id' => $validatedData['canton'], 
+                'district_id' => $validatedData['distrito'],
+            ]);
+
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
-            Log::error('Error updating user: ' . $e->getMessage());
+            Log::error('Error updating user: ' . $e->getMessage() . ' - Input: ' . json_encode($request->all()));
             return response()->json(['message' => 'Error updating user'], 500);
         }
     }
+
 
 
     /**

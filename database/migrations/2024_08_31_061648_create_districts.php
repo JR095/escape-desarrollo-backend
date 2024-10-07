@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('districts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('canton_id');
+            $table->foreignId('canton_id')->constrained('cantons');
             $table->string('name');
             $table->timestamps();
         });
