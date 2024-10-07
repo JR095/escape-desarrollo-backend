@@ -43,6 +43,7 @@ Route::get('/categories', [CategoryController::class, 'categories']);
 Route::get('/subcategories/{id}', [CategoryController::class, 'show']);
 Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
+Route::get('/items/{id1}/{id2}/{id3}/{id4}', [CategoryController::class, 'getItems']);
 
 Route::get('/companies', [CompanyController::class, 'show']);
 Route::get('/company/{id}', [CompanyController::class, 'companyShow']);

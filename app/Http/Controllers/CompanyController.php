@@ -49,7 +49,8 @@ class CompanyController extends Controller
             'companies.image',
             'cantons.name as canton_id',
             'districts.name as district_id',
-            'companies.address',
+            'companies.latitude',
+            'companies.longitude',
             'companies.followers_count',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -75,7 +76,8 @@ class CompanyController extends Controller
             'companies.image',
             'cantons.name as canton_id',
             'districts.name as district_id',
-            'companies.address',
+            'companies.latitude',
+            'companies.longitude',
             'companies.followers_count',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -101,7 +103,8 @@ class CompanyController extends Controller
             'companies.image',
             'cantons.name as canton_id',
             'districts.name as district_id',
-            'companies.address',
+            'companies.latitude',
+            'companies.longitude',
             'companies.followers_count',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -128,7 +131,8 @@ class CompanyController extends Controller
             'companies.image',
             'cantons.name as canton_id',
             'districts.name as district_id',
-            'companies.address',
+            'companies.latitude',
+            'companies.longitude',
             'companies.followers_count',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -157,7 +161,8 @@ class CompanyController extends Controller
             'companies.image',
             'cantons.name as canton_id',
             'districts.name as district_id',
-            'companies.address',
+            'companies.latitude',
+            'companies.longitude',
             'companies.followers_count',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
