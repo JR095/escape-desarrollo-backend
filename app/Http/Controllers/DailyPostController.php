@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Daily_post;
 use App\Models\Post_File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class DailyPostController extends Controller
 {
@@ -34,14 +35,21 @@ class DailyPostController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Auth::guard('company')->check()) {
+            return response()->json(['error' => 'No tiene permisos para crear una publicación.'], 403);
+        }
+        
         $request->validate([
             'description' => 'required|string',
             'files.*' => 'nullable|file|mimes:jpeg,png,jpg,mp4,mov,avi,gif|max:20480',
         ]);
 
         try {
+            $companyId = Auth::guard('company')->id();
+
             $post = Daily_post::create([
                 'description' => $request->description,
+                'company_id' => $companyId,
             ]);
 
             if ($request->hasFile('files')) {
@@ -109,6 +117,10 @@ class DailyPostController extends Controller
             return response()->json(['message' => 'Publicación no encontrada.'], 404);
         }
 
+        if (Auth::guard('company')->id() !== $post->company_id) {
+            return response()->json(['error' => 'No tiene permisos para actualizar esta publicación.'], 403);
+        }
+
         $post->description = $request->description;
         $post->save();
 
@@ -148,6 +160,11 @@ class DailyPostController extends Controller
     public function destroy($id)
     {
         $post = Daily_post::find($id);
+
+        if (!Auth::guard('company')->check() || Auth::guard('company')->id() !== $post->company_id) {
+            return response()->json(['error' => 'No tiene permisos para eliminar esta publicación.'], 403);
+        }
+        
         if ($post) {
             $files = $post->files;
 
