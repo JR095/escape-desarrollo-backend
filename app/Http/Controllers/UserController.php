@@ -166,4 +166,11 @@ class UserController extends Controller
     {
         return view('auth.reset', ['token' => $token]);
     }
+
+public function getAuthenticatedUser()
+{
+    $user = Auth::user(); 
+    return response()->json($user);
+}
+
 }

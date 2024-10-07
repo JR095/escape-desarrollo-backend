@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Log;
 
 class CompanyController extends Controller
 {
@@ -195,9 +199,21 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $company = Auth::guard('company')->user();
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required',
+            ]);
+
+            $company->update($validatedData);
+            return response()->json(['company' => $company], 200);
+        } catch (\Exception $e) {
+            Log::error('Error updating company: ' . $e->getMessage());
+            return response()->json(['message' => 'Error updating company'], 500);
+        }
     }
 
     /**

@@ -74,3 +74,8 @@ Route::post('/company-login', [LoginCompanyController::class, 'login']);
 
 Route::get('/cantons', [CantonController::class, 'index']);
 Route::get('/cantons/{id}/districts', [DistrictController::class, 'getByCanton']);
+
+Route::post('/update-company', [CompanyController::class, 'update']);
+
+Route::middleware('auth:api')->get('/authenticated-user', [UserController::class, 'getAuthenticatedUser']);
+Route::middleware('auth:company')->get('/authenticated-company', [CompanyController::class, 'getAuthenticatedCompany']);
