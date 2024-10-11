@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Favorite_post_place;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -171,6 +173,46 @@ public function getAuthenticatedUser()
 {
     $user = Auth::user(); 
     return response()->json($user);
+}
+
+public function favorite(Request $request)
+{
+    $request->validate([
+     
+        'company_id' => 'required',
+        'user_id' => 'required',
+    ]);
+
+    $NewFavorite = Favorite_post_place::create([
+        'user_id' => $request->user_id,
+        'company_id' => $request->company_id,
+    ]);
+
+    return response()->json(['message' => 'User registered successfully'], 201);
+}
+
+public function unfavorite(Request $request)
+{
+    $request->validate([
+        'company_id' => 'required',
+        'user_id' => 'required',
+    ]);
+
+    $favorite = Favorite_post_place::where('user_id', $request->user_id)->where('company_id', $request->company_id)->first();
+    if ($favorite) {
+        $favorite->delete();
+        return response()->json(['message' => 'Favorite removed successfully'], 200);
+    } else {
+        return response()->json(['message' => 'Favorite not found'], 404);
+    }
+
+}
+
+public function getFavorites($user_id)
+{
+    $favorites = Favorite_post_place::where('user_id', $user_id)->get();
+    return response()->json($favorites);
+
 }
 
 }
