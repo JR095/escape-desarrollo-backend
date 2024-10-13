@@ -31,7 +31,9 @@ Route::middleware('auth:sanctum')->get('/company', function (Request $request) {
     return $request->company();
 });
 Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
-
+Route::post('/favorite', [UserController::class, 'favorite']);
+Route::post('/unfavorite', [UserController::class, 'unfavorite']);
+Route::get('/favorites/{id}', [UserController::class, 'getFavorites']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/companies/search', [CompanyController::class, 'search']);
