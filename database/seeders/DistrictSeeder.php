@@ -33,5 +33,6 @@ class DistrictSeeder extends Seeder
         District::create(['name' => 'San Rafael', 'canton_id' => 2]);
         District::create(['name' => 'San Jerónimo', 'canton_id' => 2]);
         District::create(['name' => 'Macacona', 'canton_id' => 2]);
+        District::create(['name' => 'Espiritu Santo', 'canton_id' => 2]);
     }
 }
