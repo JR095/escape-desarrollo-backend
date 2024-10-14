@@ -23,4 +23,9 @@ class Daily_post extends Model
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'daily_post_id');
+    }
 }
