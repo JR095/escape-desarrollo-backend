@@ -13,6 +13,7 @@ use App\Http\Controllers\RegisteredCompanyController;
 use App\Http\Controllers\LoginCompanyController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -80,3 +81,9 @@ Route::post('/update-company', [CompanyController::class, 'update']);
 
 Route::middleware('auth:api')->get('/authenticated-user', [UserController::class, 'getAuthenticatedUser']);
 Route::middleware('auth:company')->get('/authenticated-company', [CompanyController::class, 'getAuthenticatedCompany']);
+
+Route::post('/create/comment', [CommentController::class, 'store']);
+Route::get('/posts/{postId}/comments', [CommentController::class, 'getPostComments']);
+Route::post('/update/comment/{id}', [CommentController::class, 'update']);
+Route::delete('/delete/comment/{id}', [CommentController::class, 'destroy']);
+Route::get('/count/comments/{postId}', [CommentController::class, 'countComments']);    
