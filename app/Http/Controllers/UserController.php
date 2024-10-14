@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Company;
+
 use App\Models\Favorite_post_place;
 
 use Illuminate\Support\Facades\Hash;
@@ -183,16 +185,6 @@ public function favorite(Request $request)
         'user_id' => 'required',
     ]);
 
-    $NewFavorite = Favorite_post_place::create([
-        'user_id' => $request->user_id,
-        'company_id' => $request->company_id,
-    ]);
-
-    return response()->json(['message' => 'User registered successfully'], 201);
-}
-
-public function unfavorite(Request $request)
-{
     $request->validate([
         'company_id' => 'required',
         'user_id' => 'required',
@@ -203,14 +195,50 @@ public function unfavorite(Request $request)
         $favorite->delete();
         return response()->json(['message' => 'Favorite removed successfully'], 200);
     } else {
-        return response()->json(['message' => 'Favorite not found'], 404);
+        $NewFavorite = Favorite_post_place::create([
+            'user_id' => $request->user_id,
+            'company_id' => $request->company_id,
+        ]);
+    
+        return response()->json(['message' => 'Favorite registered successfully'], 201);
     }
 
+    
 }
+
+
 
 public function getFavorites($user_id)
 {
-    $favorites = Favorite_post_place::where('user_id', $user_id)->get();
+    $favorites = Company::select(
+        'companies.id',
+        'companies.name',
+        'companies.phone_number',
+        'companies.user_type_id',
+        'categories.name as category_id',
+        'sub_categories.name as sub_category_id',
+        'companies.email',
+        'companies.description',
+        'companies.image',
+        'cantons.name as canton_id',
+        'districts.name as district_id',
+        'companies.latitude',
+        'companies.longitude',
+        'companies.followers_count',
+        'favorite_post_places.id as favorite'
+    )
+    ->join('categories', 'companies.category_id', '=', 'categories.id')
+    ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+    ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
+    ->join('districts', 'companies.district_id', '=', 'districts.id')
+    ->join('favorite_post_places', 'companies.id', '=', 'favorite_post_places.company_id')  // Aquí está la corrección
+    ->where('favorite_post_places.user_id', $user_id)
+    ->get();
+    
+    foreach ($favorites as $company) {
+        $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+    }
+
     return response()->json($favorites);
 
 }

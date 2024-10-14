@@ -38,7 +38,7 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show($id)
     {
         //
         $companies= Company::select(
@@ -56,11 +56,17 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'favorite_post_places.id as favorite'
+
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
         ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->leftJoin('favorite_post_places', function($join) use ($id) {
+            $join->on('companies.id', '=', 'favorite_post_places.company_id')
+                 ->where('favorite_post_places.user_id', '=', $id);
+        })
         ->get();
 
         foreach ($companies as $company) {
@@ -154,7 +160,7 @@ class CompanyController extends Controller
     }
 
 
-    public function companyShow($id)
+    public function companyShow($id, $user)
     {
         //
         $companies= Company::select(
@@ -172,11 +178,17 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'favorite_post_places.id as favorite'
+
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
         ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->leftJoin('favorite_post_places', function($join) use ($user) {
+            $join->on('companies.id', '=', 'favorite_post_places.company_id')
+                 ->where('favorite_post_places.user_id', '=', $user);
+        })
         ->where('companies.id', $id)
         ->get();
 

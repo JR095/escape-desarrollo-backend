@@ -32,7 +32,6 @@ Route::middleware('auth:sanctum')->get('/company', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
 Route::post('/favorite', [UserController::class, 'favorite']);
-Route::post('/unfavorite', [UserController::class, 'unfavorite']);
 Route::get('/favorites/{id}', [UserController::class, 'getFavorites']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [LoginController::class, 'login']);
@@ -48,8 +47,8 @@ Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
 Route::get('/items/{id1}/{id2}/{id3}/{id4}', [CategoryController::class, 'getItems']);
 
-Route::get('/companies', [CompanyController::class, 'show']);
-Route::get('/company/{id}', [CompanyController::class, 'companyShow']);
+Route::get('/companies/{id}', [CompanyController::class, 'show']);
+Route::get('/company/{id}/{user}', [CompanyController::class, 'companyShow']);
 Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
 Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
 
