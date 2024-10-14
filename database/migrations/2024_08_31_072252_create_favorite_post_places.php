@@ -14,19 +14,18 @@ return new class extends Migration
         Schema::create('favorite_post_places', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('post_place_id');
+            $table->unsignedBigInteger('company_id');
             $table->timestamps();
 
             // Foreign Key
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('post_place_id')->references('id')->on('post_places')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
             // Indexes
             $table->index('user_id');
-            $table->index('post_place_id');
+            $table->index('company_id');
 
-            // Restriccion
-            $table->unique(['user_id', 'post_place_id']);
+            
         });
 
     }
