@@ -87,3 +87,5 @@ Route::get('/posts/{postId}/comments', [CommentController::class, 'getPostCommen
 Route::post('/update/comment/{id}', [CommentController::class, 'update']);
 Route::delete('/delete/comment/{id}', [CommentController::class, 'destroy']);
 Route::get('/count/comments/{postId}', [CommentController::class, 'countComments']);    
+
+Route::post('/logout', [LoginController::class, 'logout']);
