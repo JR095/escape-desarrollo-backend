@@ -14,6 +14,7 @@ use App\Http\Controllers\LoginCompanyController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\TranslationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -89,3 +90,5 @@ Route::delete('/delete/comment/{id}', [CommentController::class, 'destroy']);
 Route::get('/count/comments/{postId}', [CommentController::class, 'countComments']);    
 
 Route::post('/logout', [LoginController::class, 'logout']);
+
+Route::post('/translate', [TranslationController::class, 'translate']);
