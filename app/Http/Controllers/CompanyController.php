@@ -248,8 +248,14 @@ class CompanyController extends Controller
             'companies.description',
             'companies.followers_count',
             'companies.image',
+            'companies.email',
+            'companies.phone_number',
             'districts.name as district_name',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
         )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
         ->where('companies.name', 'LIKE', '%' . $request->name . '%')
         ->get();
