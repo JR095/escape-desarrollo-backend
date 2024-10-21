@@ -47,7 +47,8 @@ Route::get('/categories', [CategoryController::class, 'categories']);
 Route::get('/subcategories/{id}', [CategoryController::class, 'show']);
 Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
-Route::get('/items/{id1}/{id2}/{id3}/{id4}', [CategoryController::class, 'getItems']);
+Route::get('/items/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{id}', [CategoryController::class, 'getItems']);
+Route::get('/favorite/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{user_id}', [CategoryController::class, 'getFavoriteFilter']);
 
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/company/{id}/{user}', [CompanyController::class, 'companyShow']);
