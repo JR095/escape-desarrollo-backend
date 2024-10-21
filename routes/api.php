@@ -61,10 +61,6 @@ Route::get('/filter/{$id_category}/{$id_subcategory}/{$id_canton}/{$id_district}
 Route::post('/update-user', [UserController::class, 'update']);
 Route::post('/change-password', [UserController::class, 'changePassword']);
 
-Route::post('/forgot/password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])->name('password.reset.form');
-Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
-
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
 Route::post('/update/post/{id}', [DailyPostController::class, 'update']);
@@ -92,3 +88,15 @@ Route::get('/count/comments/{postId}', [CommentController::class, 'countComments
 Route::post('/logout', [LoginController::class, 'logout']);
 
 Route::post('/translate', [TranslationController::class, 'translate']);
+
+Route::post('/forgot/password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
+
+Route::get('password/reset/{token}', function ($token) {
+    Log::info('Reset password route hit with token: ' . $token);
+    return app()->make('App\Http\Controllers\UserController')->showResetForm($token);
+})->name('password.reset');
+
+
+Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
