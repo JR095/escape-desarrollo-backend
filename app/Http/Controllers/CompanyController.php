@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -266,4 +267,56 @@ class CompanyController extends Controller
     
         return response()->json($companies);
     }
+
+    public function sendResetLinkEmail(Request $request)
+{
+    try {
+        $request->validate(['email' => 'required|email']);
+        $company = Company::where('email', $request->email)->first();
+
+        if (!$company) {
+            return response()->json(['message' => __('passwords.user')], 400);
+        }
+
+        $status = Password::broker('companies')->sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => __('passwords.sent')], 200)
+            : response()->json(['message' => __('passwords.user')], 400);
+    } catch (\Exception $e) {
+        Log::error('Error sending reset link: '.$e->getMessage());
+        return response()->json(['message' => 'An error occurred while sending the reset link'], 500);
+    }
+}
+
+public function reset(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::broker('companies')->reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($company, $password) {
+            $company->password = Hash::make($password);
+            $company->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? response()->json(['message' => __($status)], 200)
+        : response()->json(['message' => __($status)], 400);
+}
+
+public function showResetForm($token)
+{
+    // Este método podría ser simplemente un retorno JSON si no se utiliza una vista.
+    return view('auth.reset-company', ['token' => $token]);
+}
+
+
 }

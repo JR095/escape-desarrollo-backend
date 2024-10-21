@@ -100,3 +100,23 @@ Route::get('password/reset/{token}', function ($token) {
 
 
 Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
+
+
+
+
+
+
+
+
+Route::post('/company/forgot/password', [CompanyController::class, 'sendResetLinkEmail'])->name('company.password.email');
+Route::get('/company/reset/password/{token}', [CompanyController::class, 'showResetForm'])->name('company.password.reset-company.form');
+Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
+
+
+Route::get('company/password/reset/{token}', function ($token) {
+    Log::info('Reset password route hit with token: ' . $token);
+    return app()->make('App\Http\Controllers\CompanyController')->showResetForm($token);
+})->name('password.reset-company');
+
+
+Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
