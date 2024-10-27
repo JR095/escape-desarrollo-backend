@@ -22,9 +22,9 @@ return new class extends Migration
             $table->foreignId('user_type_id')->constrained();
             $table->foreignId('canton_id')->constrained();
             $table->foreignId('district_id')->constrained();
-            $table->string('preferences_1');
-            $table->string('preferences_2');
-            $table->string('preferences_3');
+            $table->string('preferences_1')->nullable();
+            $table->string('preferences_2')->nullable();
+            $table->string('preferences_3')->nullable();
             $table->timestamps();
         });
     }

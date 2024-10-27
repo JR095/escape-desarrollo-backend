@@ -57,7 +57,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
-            'favorite_post_places.id as favorite'
+            'favorite_post_places.id as favorite',
+            'companies.whatsapp',
 
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -94,6 +95,7 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'companies.whatsapp',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
@@ -121,6 +123,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'companies.whatsapp',
+
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
@@ -179,7 +183,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
-            'favorite_post_places.id as favorite'
+            'favorite_post_places.id as favorite',
+            'companies.whatsapp',
 
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -254,6 +259,8 @@ class CompanyController extends Controller
             'districts.name as district_name',
             'categories.name as category_id',
             'sub_categories.name as sub_category_id',
+            'companies.whatsapp',
+
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')

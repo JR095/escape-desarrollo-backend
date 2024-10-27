@@ -46,6 +46,24 @@ class RegisteredCompanyController extends Controller
             'password' => ['required', 'confirmed'],
         ]);
 
+        if ($request->category_id == 1) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20sus%20opciones%20de%20comida%20y%20bebida";
+        } elseif ($request->category_id == 2) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20las%20mejores%20opciones%20para%20compras";
+        } elseif ($request->category_id ==3) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20emocionantes%20actividades%20al%20aire%20libre";
+        } elseif ($request->category_id == 4) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20experiencias%20culturales%20y%20gastronomicas";
+        } elseif ($request->category_id == 5) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20opciones%20de%20entretenimiento";
+        } elseif ($request->category_id == 6) {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20sobre%20bienestar%20y%20relajacion";
+        } else {
+            $message = "?text=Hola!%20Vengo%20de%20Escape%20y%20busco%20informacion%20sobre%20sus%20actividades";
+        }
+
+        $whatsapp_url = "https://wa.me/506".$request->phone_number.$message;
+
         $company = Company::create([
             'name' => $request->name,
             'phone_number' => $request->phone_number,
@@ -60,6 +78,7 @@ class RegisteredCompanyController extends Controller
             'address' => $request->address,
             //'followers_count' => $request->followers_count,
             'password' => Hash::make($request->password),
+            'whatsapp' => $whatsapp_url
         ]);
 
         return response()->json(['message' => 'Company registered successfully', 'company' => $company], 201);

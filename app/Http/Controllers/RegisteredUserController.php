@@ -36,8 +36,6 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed'],
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            //'location' => 'required|string',
-            //'description' => 'string',
             'canton_id' => 'required',
             'district_id' => 'required',
             'preferences_1' => 'required',
@@ -51,19 +49,12 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            //'description' => $request->description,
             'user_type_id' => 2,
             'canton_id' => $request->canton_id,
             'district_id' => $request->district_id,
             'preferences_1' => $request->preferences_1,
             'preferences_2' => $request->preferences_2,
             'preferences_3' => $request->preferences_3,
-            //'user_type_id' => 2,
-            //'location' => $request->location,
-            //'social_login_provider' => 'google',
-            //'social_login_id' => 'cuatro',
-            //'location_id' => 1,
-            //'preference_id' => 1,
         ]);
 
         return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
@@ -90,7 +81,37 @@ class RegisteredUserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        // Valida los datos
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => ['nullable', 'confirmed'],
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'canton_id' => 'sometimes|required',
+            'district_id' => 'sometimes|required',
+            'preferences_1' => 'sometimes|required',
+            'preferences_2' => 'sometimes|required',
+            'preferences_3' => 'sometimes|required',
+        ]);
+    
+        // Actualiza los datos del usuario
+        $user->update([
+            'name' => $request->name ?? $user->name,
+            'email' => $request->email ?? $user->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+            'latitude' => $request->latitude ?? $user->latitude,
+            'longitude' => $request->longitude ?? $user->longitude,
+            'canton_id' => $request->canton_id ?? $user->canton_id,
+            'district_id' => $request->district_id ?? $user->district_id,
+            'preferences_1' => $request->preferences_1 ?? $user->preferences_1,
+            'preferences_2' => $request->preferences_2 ?? $user->preferences_2,
+            'preferences_3' => $request->preferences_3 ?? $user->preferences_3,
+        ]);
+    
+        return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
 
     /**
