@@ -19,6 +19,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->double('latitude', 18, 15)->nullable();
             $table->double('longitude', 18, 15)->nullable();
+            $table->string('image')->nullable();
             $table->foreignId('user_type_id')->constrained();
             $table->foreignId('canton_id')->constrained();
             $table->foreignId('district_id')->constrained();

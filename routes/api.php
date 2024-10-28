@@ -112,3 +112,5 @@ Route::get('company/password/reset/{token}', function ($token) {
 })->name('password.reset-company');
 
 Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
+
+Route::post('upload-image', [CompanyController::class, 'uploadImage']);

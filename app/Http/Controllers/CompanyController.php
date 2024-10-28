@@ -218,21 +218,40 @@ class CompanyController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request)
-    {
-        try {
-            $company = Auth::guard('company')->user();
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required',
-            ]);
+{
+    try {
+        $company = Auth::guard('company')->user();
 
-            $company->update($validatedData);
-            return response()->json(['company' => $company], 200);
-        } catch (\Exception $e) {
-            Log::error('Error updating company: ' . $e->getMessage());
-            return response()->json(['message' => 'Error updating company'], 500);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $imagePath = $company->image;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $finalName = date('His') . $filename;
+
+            $request->file('image')->storeAs('images/', $finalName, 'public');
+
+            $imagePath = $finalName;
         }
+
+        $company->update([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'image' => $imagePath,
+        ]);
+
+        return response()->json(['company' => $company, 'message' => 'Company updated successfully'], 200);
+    } catch (\Exception $e) {
+        Log::error('Error updating company: ' . $e->getMessage());
+        return response()->json(['message' => 'Error updating company'], 500);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -321,7 +340,6 @@ public function reset(Request $request)
 
 public function showResetForm($token)
 {
-    // Este método podría ser simplemente un retorno JSON si no se utiliza una vista.
     return view('auth.reset-company', ['token' => $token]);
 }
 
