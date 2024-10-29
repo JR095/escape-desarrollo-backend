@@ -225,6 +225,8 @@ class CompanyController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
+            'canton' => 'required|exists:cantons,id', 
+            'distrito' => 'required|exists:districts,id', 
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -242,6 +244,8 @@ class CompanyController extends Controller
         $company->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
+            'canton_id' => $validatedData['canton'], 
+            'district_id' => $validatedData['distrito'],
             'image' => $imagePath,
         ]);
 
