@@ -228,6 +228,8 @@ class CompanyController extends Controller
             'canton' => 'required|exists:cantons,id', 
             'distrito' => 'required|exists:districts,id', 
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description' => 'required|string',
+            'phone_number' => 'required',
         ]);
 
         $imagePath = $company->image;
@@ -247,6 +249,8 @@ class CompanyController extends Controller
             'canton_id' => $validatedData['canton'], 
             'district_id' => $validatedData['distrito'],
             'image' => $imagePath,
+            'description' => $validatedData['description'],
+            'phone_number' => $validatedData['phone_number'],
         ]);
 
         return response()->json(['company' => $company, 'message' => 'Company updated successfully'], 200);
