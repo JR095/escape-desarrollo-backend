@@ -27,6 +27,7 @@ return new class extends Migration
             $table->double('longitude', 18, 15)->nullable();
             $table->bigInteger('followers_count')->default(0)->nullable();
             $table->string('password');
+            $table->string('whatsapp')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });

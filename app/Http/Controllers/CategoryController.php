@@ -41,7 +41,7 @@ class CategoryController extends Controller
          return response()->json($district,200, [], JSON_UNESCAPED_UNICODE);
     }
 
-    public function getItems($id1, $id2, $id3, $id4)
+    public function getItems($idCategory, $idSubCategory, $idCanton, $idDistrict,$id)
     {
        
         $items = Company::select(
@@ -58,24 +58,78 @@ class CategoryController extends Controller
             'districts.name as district_id',
             'companies.latitude',
             'companies.longitude',
-            'companies.followers_count'
+            'companies.followers_count',
+            'favorite_post_places.id as favorite'
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
         ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
-        ->when($id1 != 0, function($query) use ($id1) {
-            return $query->where('companies.category_id', $id1);
+        ->when($idCategory != 0, function($query) use ($idCategory) {
+            return $query->where('companies.category_id', $idCategory);
         })
-        ->when($id2 != 0, function($query) use ($id2) {
-            return $query->where('companies.sub_categories_id', $id2);
+        ->when($idSubCategory != 0, function($query) use ($idSubCategory) {
+            return $query->where('companies.sub_categories_id', $idSubCategory);
         })
-        ->when($id3 != 0, function($query) use ($id3) {
-            return $query->where('companies.canton_id', $id3);
+        ->when($idCanton != 0, function($query) use ($idCanton) {
+            return $query->where('companies.canton_id', $idCanton);
         })
-        ->when($id4 != 0, function($query) use ($id4) {
-            return $query->where('companies.district_id', $id4);
+        ->when($idDistrict != 0, function($query) use ($idDistrict) {
+            return $query->where('companies.district_id', $idDistrict);
         })
+        ->leftJoin('favorite_post_places', function($join) use ($id) {
+            $join->on('companies.id', '=', 'favorite_post_places.company_id')
+                 ->where('favorite_post_places.user_id', '=', $id);
+        })
+        ->get();
+
+        foreach ($items as $activity) {
+            $activity->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$activity->image;
+        }
+        
+         return response()->json($items,200, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getFavoriteFilter($idCategory, $idSubCategory, $idCanton, $idDistrict, $user_id)
+    {
+       
+        $items = Company::select(
+            'companies.id',
+            'companies.name',
+            'companies.phone_number',
+            'companies.user_type_id',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
+            'companies.email',
+            'companies.description',
+            'companies.image',
+            'cantons.name as canton_id',
+            'districts.name as district_id',
+            'companies.latitude',
+            'companies.longitude',
+            'companies.followers_count',
+            'favorite_post_places.id as favorite'
+        )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->join('cantons', 'companies.canton_id', '=', 'cantons.id')
+        ->join('districts', 'companies.district_id', '=', 'districts.id')
+        ->join('favorite_post_places', 'companies.id', '=', 'favorite_post_places.company_id')  // Aquí está la corrección
+
+        ->when($idCategory != 0, function($query) use ($idCategory) {
+            return $query->where('companies.category_id', $idCategory);
+        })
+        ->when($idSubCategory != 0, function($query) use ($idSubCategory) {
+            return $query->where('companies.sub_categories_id', $idSubCategory);
+        })
+        ->when($idCanton != 0, function($query) use ($idCanton) {
+            return $query->where('companies.canton_id', $idCanton);
+        })
+        ->when($idDistrict != 0, function($query) use ($idDistrict) {
+            return $query->where('companies.district_id', $idDistrict);
+        })
+        ->where('favorite_post_places.user_id', $user_id)
+
         ->get();
 
         foreach ($items as $activity) {

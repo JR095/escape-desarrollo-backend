@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'latitude',
         'longitude',
+        'image',
         'user_type_id',
         'canton_id',
         'district_id',

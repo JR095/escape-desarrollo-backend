@@ -33,7 +33,8 @@ class Company extends Authenticatable
         'latitude',
         'longitude',
         'followers_count',
-        'password'
+        'password',
+        'whatsapp',
     ];
 
     /**

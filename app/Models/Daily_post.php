@@ -28,4 +28,9 @@ class Daily_post extends Model
     {
         return $this->hasMany(Comment::class, 'daily_post_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'daily_post_id');
+    }
 }

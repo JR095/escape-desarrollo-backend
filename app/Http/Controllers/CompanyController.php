@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -56,7 +57,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
-            'favorite_post_places.id as favorite'
+            'favorite_post_places.id as favorite',
+            'companies.whatsapp',
 
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -93,6 +95,7 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'companies.whatsapp',
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
@@ -120,6 +123,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
+            'companies.whatsapp',
+
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
         ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
@@ -178,7 +183,8 @@ class CompanyController extends Controller
             'companies.latitude',
             'companies.longitude',
             'companies.followers_count',
-            'favorite_post_places.id as favorite'
+            'favorite_post_places.id as favorite',
+            'companies.whatsapp',
 
         )
         ->join('categories', 'companies.category_id', '=', 'categories.id')
@@ -212,21 +218,48 @@ class CompanyController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request)
-    {
-        try {
-            $company = Auth::guard('company')->user();
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required',
-            ]);
+{
+    try {
+        $company = Auth::guard('company')->user();
 
-            $company->update($validatedData);
-            return response()->json(['company' => $company], 200);
-        } catch (\Exception $e) {
-            Log::error('Error updating company: ' . $e->getMessage());
-            return response()->json(['message' => 'Error updating company'], 500);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'canton' => 'required|exists:cantons,id', 
+            'distrito' => 'required|exists:districts,id', 
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description' => 'required|string',
+            'phone_number' => 'required',
+        ]);
+
+        $imagePath = $company->image;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $finalName = date('His') . $filename;
+
+            $request->file('image')->storeAs('images/', $finalName, 'public');
+
+            $imagePath = $finalName;
         }
+
+        $company->update([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'canton_id' => $validatedData['canton'], 
+            'district_id' => $validatedData['distrito'],
+            'image' => $imagePath,
+            'description' => $validatedData['description'],
+            'phone_number' => $validatedData['phone_number'],
+        ]);
+
+        return response()->json(['company' => $company, 'message' => 'Company updated successfully'], 200);
+    } catch (\Exception $e) {
+        Log::error('Error updating company: ' . $e->getMessage());
+        return response()->json(['message' => 'Error updating company'], 500);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -248,8 +281,16 @@ class CompanyController extends Controller
             'companies.description',
             'companies.followers_count',
             'companies.image',
+            'companies.email',
+            'companies.phone_number',
             'districts.name as district_name',
+            'categories.name as category_id',
+            'sub_categories.name as sub_category_id',
+            'companies.whatsapp',
+
         )
+        ->join('categories', 'companies.category_id', '=', 'categories.id')
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
         ->join('districts', 'companies.district_id', '=', 'districts.id')
         ->where('companies.name', 'LIKE', '%' . $request->name . '%')
         ->get();
@@ -260,4 +301,55 @@ class CompanyController extends Controller
     
         return response()->json($companies);
     }
+
+    public function sendResetLinkEmail(Request $request)
+{
+    try {
+        $request->validate(['email' => 'required|email']);
+        $company = Company::where('email', $request->email)->first();
+
+        if (!$company) {
+            return response()->json(['message' => __('passwords.user')], 400);
+        }
+
+        $status = Password::broker('companies')->sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => __('passwords.sent')], 200)
+            : response()->json(['message' => __('passwords.user')], 400);
+    } catch (\Exception $e) {
+        Log::error('Error sending reset link: '.$e->getMessage());
+        return response()->json(['message' => 'An error occurred while sending the reset link'], 500);
+    }
+}
+
+public function reset(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::broker('companies')->reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($company, $password) {
+            $company->password = Hash::make($password);
+            $company->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? response()->json(['message' => __($status)], 200)
+        : response()->json(['message' => __($status)], 400);
+}
+
+public function showResetForm($token)
+{
+    return view('auth.reset-company', ['token' => $token]);
+}
+
+
 }

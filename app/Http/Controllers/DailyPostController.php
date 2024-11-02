@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Daily_post;
 use App\Models\Post_File;
+use App\Models\Like;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,8 @@ class DailyPostController extends Controller
      */
     public function index()
     {
+        $userId = auth()->id();
+
         $posts = Daily_post::with([
             'files:id,daily_post_id,file_path,file_type', 
             'company:id,name,canton_id,district_id,category_id,image',
@@ -23,7 +26,12 @@ class DailyPostController extends Controller
             'company.category:id,name',
         ])
         ->select('id', 'description', 'company_id')
-        ->get();
+        ->withCount('likes')
+        ->get()
+        ->map(function ($post) use ($userId) {
+            $post->liked = $userId ? $post->likes()->where('user_id', $userId)->exists() : false;
+            return $post;
+        });
 
     return response()->json($posts);
     }
@@ -45,7 +53,12 @@ class DailyPostController extends Controller
         ])
         ->where('company_id', $companyId)
         ->select('id', 'description', 'company_id')
-        ->get();
+        ->withCount('likes')
+        ->get()
+        ->map(function ($post) use ($companyId) {
+            $post->liked = $companyId ? $post->likes()->where('company_id', $companyId)->exists() : false;
+            return $post;
+        });
 
         return response()->json($posts);
     }

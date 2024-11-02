@@ -15,6 +15,7 @@ use App\Http\Controllers\CantonController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\LikesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -47,7 +48,8 @@ Route::get('/categories', [CategoryController::class, 'categories']);
 Route::get('/subcategories/{id}', [CategoryController::class, 'show']);
 Route::get('/canton', [CategoryController::class, 'canton']);
 Route::get('/district/{id}', [CategoryController::class, 'district']);
-Route::get('/items/{id1}/{id2}/{id3}/{id4}', [CategoryController::class, 'getItems']);
+Route::get('/items/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{id}', [CategoryController::class, 'getItems']);
+Route::get('/favorite/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{user_id}', [CategoryController::class, 'getFavoriteFilter']);
 
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/company/{id}/{user}', [CompanyController::class, 'companyShow']);
@@ -56,14 +58,8 @@ Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter'])
 
 Route::get('/filter/{$id_category}/{$id_subcategory}/{$id_canton}/{$id_district}', [CompanyController::class, 'categoryFilter']);
 
-
-
 Route::post('/update-user', [UserController::class, 'update']);
 Route::post('/change-password', [UserController::class, 'changePassword']);
-
-Route::post('/forgot/password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])->name('password.reset.form');
-Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
@@ -87,8 +83,34 @@ Route::post('/create/comment', [CommentController::class, 'store']);
 Route::get('/posts/{postId}/comments', [CommentController::class, 'getPostComments']);
 Route::post('/update/comment/{id}', [CommentController::class, 'update']);
 Route::delete('/delete/comment/{id}', [CommentController::class, 'destroy']);
-Route::get('/count/comments/{postId}', [CommentController::class, 'countComments']);    
+Route::get('/count/comments/{postId}', [CommentController::class, 'countComments']); 
+
+Route::post('/posts/{postId}/like', [LikesController::class, 'toggleLike']);
 
 Route::post('/logout', [LoginController::class, 'logout']);
 
 Route::post('/translate', [TranslationController::class, 'translate']);
+
+Route::post('/forgot/password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset/password/{token}', [UserController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
+
+Route::get('password/reset/{token}', function ($token) {
+    Log::info('Reset password route hit with token: ' . $token);
+    return app()->make('App\Http\Controllers\UserController')->showResetForm($token);
+})->name('password.reset');
+
+Route::post('/reset/password', [UserController::class, 'reset'])->name('password.reset');
+
+Route::post('/company/forgot/password', [CompanyController::class, 'sendResetLinkEmail'])->name('company.password.email');
+Route::get('/company/reset/password/{token}', [CompanyController::class, 'showResetForm'])->name('company.password.reset-company.form');
+Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
+
+Route::get('company/password/reset/{token}', function ($token) {
+    Log::info('Reset password route hit with token: ' . $token);
+    return app()->make('App\Http\Controllers\CompanyController')->showResetForm($token);
+})->name('password.reset-company');
+
+Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
+
+Route::post('upload-image', [CompanyController::class, 'uploadImage']);

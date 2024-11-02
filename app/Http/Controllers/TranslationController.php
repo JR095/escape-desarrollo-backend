@@ -10,6 +10,7 @@ class TranslationController extends Controller
 {
     public function translate(Request $request)
     {
+        Log::info('Solicitud de traducción recibida', $request->all());
         $text = $request->input('text');
         $sourceLang = $request->input('source_lang');
         $targetLang = $request->input('target_lang');
@@ -24,14 +25,21 @@ class TranslationController extends Controller
         }
 
         try {
-            $apiUrl = "https://lingva.ml/api/v1/$sourceLang/$targetLang/" . rawurlencode($text);
-            $response = @file_get_contents($apiUrl); 
+            $apiUrl = "http://localhost:5001/api/v1/$sourceLang/$targetLang/" . rawurlencode($text);
+            $response = @file_get_contents($apiUrl);
 
             if ($response === false) {
+                Log::error('Error al conectar con la API de traducción.');
                 return response()->json(['error' => 'Error al conectar con la API de traducción.'], 500);
             }
 
-            $translation = json_decode($response, true)['translation'] ?? $text;
+            $responseData = json_decode($response, true);
+            if (isset($responseData['error'])) {
+                Log::error('Error en la API de traducción', $responseData);
+                return response()->json(['error' => 'Error en la API de traducción.'], 500);
+            }
+
+            $translation = $responseData['translation'] ?? $text;
 
             Cache::put($cacheKey, $translation, now()->addHour());
 
@@ -40,4 +48,5 @@ class TranslationController extends Controller
             return response()->json(['error' => 'Error inesperado: ' . $e->getMessage()], 500);
         }
     }
+    
 }
