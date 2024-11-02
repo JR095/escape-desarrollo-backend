@@ -17,7 +17,7 @@ class DailyPostController extends Controller
     {
         $posts = Daily_post::with([
             'files:id,daily_post_id,file_path,file_type', 
-            'company:id,name,canton_id,district_id,category_id',
+            'company:id,name,canton_id,district_id,category_id,image',
             'company.canton:id,name',
             'company.district:id,name',
             'company.category:id,name',
