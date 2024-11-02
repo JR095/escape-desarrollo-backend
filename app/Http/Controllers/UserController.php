@@ -78,8 +78,7 @@ class UserController extends Controller
                 $filename = $file->getClientOriginalName();
                 $finalName = date('His') . $filename;
 
-                $request->file('image')->storeAs('images/', $finalName, 'public');
-
+                $file->move(public_path('imgs'), $finalName);
                 $imagePath = $finalName;
             }
 
