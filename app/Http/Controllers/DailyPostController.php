@@ -236,7 +236,10 @@ class DailyPostController extends Controller
     {
         $post = Daily_post::find($id);
 
-        
+        if (!Auth::guard('company')->check() || Auth::guard('company')->id() !== $post->company_id) {
+            return response()->json(['error' => 'No tiene permisos para eliminar esta publicación.'], 403);
+        }
+
         if ($post) {
             $files = $post->files;
 
