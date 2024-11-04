@@ -84,7 +84,7 @@ class CategoryController extends Controller
         ->get();
 
         foreach ($items as $activity) {
-            $activity->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$activity->image;
+            $activity->image = "https://myescape.online/imgs/".$activity->image;
         }
         
          return response()->json($items,200, [], JSON_UNESCAPED_UNICODE);
