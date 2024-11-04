@@ -76,10 +76,7 @@ class DailyPostController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::guard('company')->check()) {
-            return response()->json(['error' => 'No tiene permisos para crear una publicación.'], 403);
-        }
-
+       
         $validator = Validator::make($request->all(), [
             'description' => 'required|string',
             'files.*' => [
