@@ -72,7 +72,7 @@ class CompanyController extends Controller
         ->get();
 
         foreach ($companies as $company) {
-            $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+            $company->image = "https://myescape.online/imgs/".$company->image;
         }
         
         return $companies;
@@ -199,7 +199,7 @@ class CompanyController extends Controller
         ->get();
 
         foreach ( $companies as $activity) {
-            $activity->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$activity->image;
+            $activity->image = "https://myescape.online/imgs/".$activity->image;
         }
     
         return $companies;
@@ -296,7 +296,7 @@ class CompanyController extends Controller
         ->get();
         
         foreach ($companies as $company) {
-            $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+            $company->image = "https://myescape.online/imgs/".$company->image;
         }
     
         return response()->json($companies);
