@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('preferences_1')->nullable();
             $table->string('preferences_2')->nullable();
             $table->string('preferences_3')->nullable();
+            $table->bigInteger('following_count')->default(0)->nullable(); 
             $table->timestamps();
         });
     }
