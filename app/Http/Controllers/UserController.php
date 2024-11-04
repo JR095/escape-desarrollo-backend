@@ -173,7 +173,7 @@ public function getFavorites($user_id)
     ->get();
     
     foreach ($favorites as $company) {
-        $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+        $company->image = "https://myescape.online/imgs/".$company->image;
     }
 
     return response()->json($favorites);
