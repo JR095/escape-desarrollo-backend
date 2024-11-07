@@ -34,17 +34,17 @@ class CommentController extends Controller
             'comment' => 'required|string',
         ]);
 
-        $user = Auth::user(); 
-        $company = Auth::guard('company')->user(); 
-
         $comment = new Comment();
         $comment->daily_post_id = $request->daily_post_id;
         $comment->comment = $request->comment;
 
-        if ($user) {
-            $comment->user_id = $user->id;
-        } elseif ($company) {
-            $comment->company_id = $company->id; 
+        $userId = session('user_id');
+        $companyId = session('company_id');
+
+        if ($userId) {
+            $comment->user_id = $userId;
+        } elseif ($companyId) {
+            $comment->company_id = $companyId;
         }
 
         $comment->save();

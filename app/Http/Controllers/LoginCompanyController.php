@@ -76,6 +76,8 @@ class LoginCompanyController extends Controller
         if (Auth::guard('company')->attempt($credentials)) {
             $request->session()->regenerate();
         
+            session(['company_id' => Auth::guard('company')->id()]);
+            
             return response()->json([
                 'message' => 'Login successful',
                 'user' => Auth::guard('company')->user(),
