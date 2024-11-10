@@ -32,19 +32,20 @@ class CommentController extends Controller
         $request->validate([
             'daily_post_id' => 'required|exists:daily_posts,id',
             'comment' => 'required|string',
+            'user_id' => 'nullable|exists:users,id',
+            'company_id' => 'nullable|exists:companies,id'
         ]);
 
         $comment = new Comment();
         $comment->daily_post_id = $request->daily_post_id;
         $comment->comment = $request->comment;
 
-        $userId = session('user_id');
-        $companyId = session('company_id');
-
-        if ($userId) {
-            $comment->user_id = $userId;
-        } elseif ($companyId) {
-            $comment->company_id = $companyId;
+        if ($request->user_id) {
+            $comment->user_id = $request->user_id;
+        } elseif ($request->company_id) {
+            $comment->company_id = $request->company_id;
+        } else {
+            return response()->json(['error' => 'User ID or Company ID is required'], 400);
         }
 
         $comment->save();

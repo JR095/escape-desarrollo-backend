@@ -20,20 +20,21 @@ class SearchController extends Controller
     {
         $request->validate([
             'search_term' => 'required|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'company_id' => 'nullable|exists:companies,id'
         ]);
-
-        $userId = Auth::user();
-        $companyId = Auth::guard('company')->user();
 
         $search = new Search_history();
         $search->search_term = $request->input('search_term');
         $search->searched_at = now();
         $search->save();
 
-        if ($userId) {
-            $search->user_id = $userId->id;
-        } elseif ($companyId) {
-            $search->company_id = $companyId->id;
+        if ($request->user_id) {
+            $search->user_id = $request->user_id;
+        } elseif ($request->company_id) {
+            $search->company_id = $request->company_id;
+        } else {
+            return response()->json(['error' => 'User ID or Company ID is required'], 400);
         }
 
         $search->save();
@@ -41,10 +42,15 @@ class SearchController extends Controller
         return response()->json(['message' => 'Search term stored successfully'], 200);
     }
 
-    public function recent()
+    public function recent(Request $request)
     {
-        $userId = Auth::id(); 
-        $companyId = Auth::guard('company')->id();
+        $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'company_id' => 'nullable|exists:companies,id'
+        ]);
+
+        $userId = $request->query('user_id');
+        $companyId = $request->query('company_id');
 
         if ($userId) {
             $recentSearches = Search_history::where('user_id', $userId)

@@ -74,8 +74,6 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            session(['user_id' => Auth::id()]);
             
             return response()->json([
                 'message' => 'Login successful',

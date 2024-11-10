@@ -14,10 +14,8 @@ class DailyPostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $userId = auth()->id();
-
         $posts = Daily_post::with([
             'files:id,daily_post_id,file_path,file_type',
             'company:id,name,canton_id,district_id,category_id,image',
@@ -27,22 +25,34 @@ class DailyPostController extends Controller
         ])
             ->select('id', 'description', 'company_id')
             ->withCount('likes')
-            ->get()
-            ->map(function ($post) use ($userId) {
-                $post->liked = $userId ? $post->likes()->where('user_id', $userId)->exists() : false;
-                return $post;
-            });
+            ->get();
+
+        $userId = $request->input('user_id');
+        $companyId = $request->input('company_id');
+
+        $posts = $posts->map(function ($post) use ($userId, $companyId) {
+            $liked = false; 
+            if ($userId) {
+                $liked = $post->likes()->where('user_id', $userId)->exists();
+            } elseif ($companyId) {
+                $liked = $post->likes()->where('company_id', $companyId)->exists();
+            }
+
+            $post->liked = $liked;
+
+            return $post;
+        });
 
         return response()->json($posts);
     }
 
-    public function getCompanyPosts()
+    public function getCompanyPosts(Request $request)
     {
-        if (!Auth::guard('company')->check()) {
-            return response()->json(['error' => 'No está autenticado como compañía.'], 401);
-        }
+        $companyId = $request->query('company_id');
 
-        $companyId = Auth::guard('company')->id();
+        if (!$companyId) {
+            return response()->json(['error' => 'Company ID is required'], 400);
+        }
 
         $posts = Daily_post::with([
             'files:id,daily_post_id,file_path,file_type',
@@ -76,9 +86,6 @@ class DailyPostController extends Controller
      */
     public function store(Request $request)
     {
-        
-      
-
         $validator = Validator::make($request->all(), [
             'description' => 'required|string',
             'files.*' => [
@@ -183,15 +190,12 @@ class DailyPostController extends Controller
                 return response()->json(['message' => 'Publicación no encontrada.'], 404);
             }
 
-            if (Auth::guard('company')->id() !== $post->company_id) {
+            if ($request->company_id != $post->company_id) {
                 return response()->json(['error' => 'No tiene permisos para actualizar esta publicación.'], 403);
             }
 
             $post->description = $request->description;
 
-            if ($request->company_id != null) 
-            $post->company_id = $request->company_id;{
-            }
             $post->save();
 
             if ($request->hasFile('files')) {
@@ -230,17 +234,21 @@ class DailyPostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $post = Daily_post::find($id);
+        try {
+            $companyId = $request->company_id;
 
-        if (!Auth::guard('company')->check() || Auth::guard('company')->id() !== $post->company_id) {
-            return response()->json(['error' => 'No tiene permisos para eliminar esta publicación.'], 403);
-        }
+            $post = Daily_post::find($id);
+            if (!$post) {
+                return response()->json(['message' => 'Publicación no encontrada.'], 404);
+            }
 
-        if ($post) {
+            if ($companyId !== $post->company_id) {
+                return response()->json(['error' => 'No tiene permisos para eliminar esta publicación.'], 403);
+            }
+
             $files = $post->files;
-
             foreach ($files as $file) {
                 $filePath = public_path('storage/' . $file->file_path);
                 if (file_exists($filePath)) {
@@ -249,10 +257,9 @@ class DailyPostController extends Controller
                 $file->delete();
             }
             $post->delete();
-
             return response()->json(['message' => 'Publicación e imágenes relacionadas eliminadas con éxito.'], 200);
-        } else {
-            return response()->json(['message' => 'Publicación no encontrada.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al eliminar la publicación. ' . $e->getMessage()], 500);
         }
     }
 
