@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Daily_post;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -198,10 +199,11 @@ class CompanyController extends Controller
         ->where('companies.id', $id)
         ->get();
 
-        foreach ( $companies as $activity) {
-            $activity->image = "https://myescape.online/imgs/".$activity->image;
-        }
-    
+        $filename = $companies[0]->image;
+        $companies[0]->image = "https://myescape.online/imgs/".$filename;
+        $count = Daily_post::where('company_id', $id)->count();
+        $companies[0]->posts=$count;
+
         return $companies;
         
     }

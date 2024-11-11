@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DailyPostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegisteredCompanyController;
+use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\LoginCompanyController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\DistrictController;
@@ -35,6 +36,8 @@ Route::middleware('auth:sanctum')->get('/company', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
 Route::post('/favorite', [UserController::class, 'favorite']);
+Route::post('/follower', [FollowerController::class, 'follower']);
+
 Route::get('/favorites/{id}', [UserController::class, 'getFavorites']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [LoginController::class, 'login']);
