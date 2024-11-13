@@ -208,6 +208,35 @@ class CompanyController extends Controller
         
     }
 
+    public function companyInfo($id, $user)
+    {
+        
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'sub_categories.name as sub_category_id',
+            'companies.description',
+            'companies.image',
+            'companies.followers_count',
+            'followers.id as follow',
+        )
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->leftJoin('followers', function($join) use ($user) {
+            $join->on('companies.id', '=', 'followers.company_id')
+                 ->where('followers.user_id', '=', $user);
+        })
+        ->where('companies.id', $id)
+        ->get();
+
+        $filename = $companies[0]->image;
+        $companies[0]->image = "https://myescape.online/imgs/".$filename;
+        $count = Daily_post::where('company_id', $id)->count();
+        $companies[0]->posts=$count;
+
+        return $companies;
+        
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

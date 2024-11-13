@@ -56,6 +56,8 @@ Route::get('/favorite/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{user
 
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/company/{id}/{user}', [CompanyController::class, 'companyShow']);
+Route::get('/companyinfo/{id}/{user}', [CompanyController::class, 'companyInfo']);
+
 Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
 Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
 
