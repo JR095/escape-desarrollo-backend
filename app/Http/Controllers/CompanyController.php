@@ -208,6 +208,26 @@ class CompanyController extends Controller
         
     }
 
+    public function companyfollow( $user)
+    {
+        
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'followers.id as follow',
+            'companies.image'
+        )
+        ->Join('followers', 'companies.id', '=', 'followers.company_id')
+        ->where('followers.user_id', $user)
+        ->get();
+        foreach ($companies as $company) {
+            $company->image = "https://myescape.online/imgs/".$company->image;
+        }
+
+        return $companies;
+        
+    }
+
     public function companyInfo($id, $user)
     {
         

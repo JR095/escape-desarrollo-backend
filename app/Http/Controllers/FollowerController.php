@@ -25,15 +25,20 @@ class FollowerController extends Controller
     if ($follow) {
         $follow->delete();
         $company->decrement('followers_count');
-        return response()->json(['message' => 'Follower removed successfully'], 200);
+        return response()->json([
+            'message' => 'Follower removed successfully',
+            'isFollowing' => false
+        ], 200);
     } else {
         $follow = Follower::create([
             'user_id' => $request->user_id,
             'company_id' => $request->company_id,
         ]);
         $company->increment('followers_count');
-        return response()->json(['message' => 'Follower registered successfully'], 201);
-    }
+        return response()->json([
+            'message' => 'Follower registered successfully',
+            'isFollowing' => true
+        ], 201);    }
 
     
 }

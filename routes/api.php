@@ -60,6 +60,7 @@ Route::get('/companyinfo/{id}/{user}', [CompanyController::class, 'companyInfo']
 
 Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
 Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
+Route::get('/following/{id}', [CompanyController::class, 'companyfollow']);
 
 Route::get('/filter/{$id_category}/{$id_subcategory}/{$id_canton}/{$id_district}', [CompanyController::class, 'categoryFilter']);
 
