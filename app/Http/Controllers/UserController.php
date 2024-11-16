@@ -62,15 +62,17 @@ class UserController extends Controller
     public function update(Request $request)
     {
         try {
-            $user = auth()->user();
 
             $validatedData = $request->validate([
+                'id' => 'required|exists:users,id',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
                 'canton' => 'required|exists:cantons,id', 
                 'distrito' => 'required|exists:districts,id', 
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,|max:2048',
             ]);
+
+            $user = User::findOrFail($validatedData['id']);
 
             $imagePath = $user->image; 
             if ($request->hasFile('image')) {
@@ -182,25 +184,27 @@ public function getFavorites($user_id)
 
     public function changePassword(Request $request)
     {
-        if (!Auth::check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+        try {
+            $validatedData = $request->validate([
+                'id' => 'required|exists:users,id', 
+                'old_password' => 'required',
+                'new_password' => 'required|min:6|confirmed',
+            ]);
     
-        $request->validate([
-            'old_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
-        ]);
-
-        $user = Auth::user();
-
-        if (!Hash::check($request->old_password, $user->password)) {
-            return response()->json(['message' => 'The old password is incorrect.'], 400);
+            $user = User::findOrFail($validatedData['id']);
+    
+            if (!Hash::check($validatedData['old_password'], $user->password)) {
+                return response()->json(['message' => 'The old password is incorrect.'], 400);
+            }
+    
+            $user->password = Hash::make($validatedData['new_password']);
+            $user->save();
+    
+            return response()->json(['message' => 'Password successfully changed.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error changing password: ' . $e->getMessage());
+            return response()->json(['message' => 'Error changing password.'], 500);
         }
-
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        return response()->json(['message' => 'Password successfully changed.']);
     }
 
     public function sendResetLinkEmail(Request $request)

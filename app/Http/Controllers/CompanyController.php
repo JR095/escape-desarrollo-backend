@@ -271,9 +271,8 @@ class CompanyController extends Controller
     public function update(Request $request)
 {
     try {
-        $company = Auth::guard('company')->user();
-
         $validatedData = $request->validate([
+            'id' => 'required|exists:companies,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'canton' => 'required|exists:cantons,id', 
@@ -282,6 +281,8 @@ class CompanyController extends Controller
             'description' => 'required|string',
             'phone_number' => 'required',
         ]);
+
+        $company = Company::findOrFail($validatedData['id']);
 
         $imagePath = $company->image;
         if ($request->hasFile('image')) {
@@ -310,6 +311,31 @@ class CompanyController extends Controller
         return response()->json(['message' => 'Error updating company'], 500);
     }
 }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'id' => 'required|exists:companies,id', 
+                'old_password' => 'required',
+                'new_password' => 'required|min:6|confirmed',
+            ]);
+    
+            $user = Company::findOrFail($validatedData['id']);
+    
+            if (!Hash::check($validatedData['old_password'], $user->password)) {
+                return response()->json(['message' => 'The old password is incorrect.'], 400);
+            }
+    
+            $user->password = Hash::make($validatedData['new_password']);
+            $user->save();
+    
+            return response()->json(['message' => 'Password successfully changed.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error changing password: ' . $e->getMessage());
+            return response()->json(['message' => 'Error changing password.'], 500);
+        }
+    }
 
 
     /**

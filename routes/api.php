@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisteredUserController;
@@ -66,6 +67,7 @@ Route::get('/filter/{$id_category}/{$id_subcategory}/{$id_canton}/{$id_district}
 
 Route::post('/update-user', [UserController::class, 'update']);
 Route::post('/change-password', [UserController::class, 'changePassword']);
+Route::post('/change-password-company', [CompanyController::class, 'changePassword']);
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
