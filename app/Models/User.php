@@ -28,9 +28,9 @@ class User extends Authenticatable
         'user_type_id',
         'canton_id',
         'district_id',
-        'preferences_1',
-        'preferences_2',
-        'preferences_3'
+        'preferences_1_id',
+        'preferences_2_id',
+        'preferences_3_id'
     ];
 
     /**

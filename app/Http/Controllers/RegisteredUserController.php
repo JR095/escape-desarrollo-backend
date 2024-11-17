@@ -38,9 +38,9 @@ class RegisteredUserController extends Controller
             'longitude' => 'nullable|numeric',
             'canton_id' => 'required',
             'district_id' => 'required',
-            'preferences_1' => 'required',
-            'preferences_2' => 'required',
-            'preferences_3' => 'required',
+            'preferences_1_id' => 'required',
+            'preferences_2_id' => 'required',
+            'preferences_3_id' => 'required',
         ]);
 
         $user = User::create([
@@ -52,9 +52,9 @@ class RegisteredUserController extends Controller
             'user_type_id' => 2,
             'canton_id' => $request->canton_id,
             'district_id' => $request->district_id,
-            'preferences_1' => $request->preferences_1,
-            'preferences_2' => $request->preferences_2,
-            'preferences_3' => $request->preferences_3,
+            'preferences_1_id' => $request->preferences_1_id,
+            'preferences_2_id' => $request->preferences_2_id,
+            'preferences_3_id' => $request->preferences_3_id,
         ]);
 
         return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
