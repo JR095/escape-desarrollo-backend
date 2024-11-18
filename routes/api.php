@@ -18,6 +18,7 @@ use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\LikesController;
+use App\Http\Controllers\ContactController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -122,3 +123,5 @@ Route::get('company/password/reset/{token}', function ($token) {
 Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
 
 Route::post('upload-image', [CompanyController::class, 'uploadImage']);
+
+Route::post('/contact', [ContactController::class, 'store']);
