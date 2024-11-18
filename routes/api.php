@@ -16,6 +16,7 @@ use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\LikesController;
+use App\Http\Controllers\RatingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -75,6 +76,9 @@ Route::get('/cantons', [CantonController::class, 'index']);
 Route::get('/cantons/{id}/districts', [DistrictController::class, 'getByCanton']);
 
 Route::post('/update-company', [CompanyController::class, 'update']);
+
+Route::get('/rating', [RatingController::class, 'index']);
+Route::post('/save-rating', [RatingController::class, 'store']);
 
 Route::middleware('auth:api')->get('/authenticated-user', [UserController::class, 'getAuthenticatedUser']);
 Route::middleware('auth:company')->get('/authenticated-company', [CompanyController::class, 'getAuthenticatedCompany']);
