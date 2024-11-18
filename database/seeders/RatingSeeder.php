@@ -15,6 +15,5 @@ class RatingSeeder extends Seeder
         Rating::create(['post_place_id' => 1, 'user_id' => 1, 'rating' => 1]);
         Rating::create(['post_place_id' => 1, 'user_id' => 2, 'rating' => 5]);
         Rating::create(['post_place_id' => 1, 'user_id' => 3, 'rating' => 4]);
-        Rating::create(['post_place_id' => 1, 'user_id' => 4, 'rating' => 4]);
     }
 }
