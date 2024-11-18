@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Company;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactMessage;
 
-class LoginCompanyController extends Controller
+class ContactController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,7 +29,15 @@ class LoginCompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ]);
+    
+        Mail::to('escapeteamassociation@gmail.com')->send(new ContactMessage($validated));
+    
+        return response()->json(['message' => 'Mensaje enviado correctamente'], 200);
     }
 
     /**
@@ -64,24 +70,5 @@ class LoginCompanyController extends Controller
     public function destroy(string $id)
     {
         //
-    }
-
-    public function login(Request $request) 
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::guard('company')->attempt($credentials)) {
-            $request->session()->regenerate();
-                    
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => Auth::guard('company')->user(),
-            ], 200);
-        }
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 }

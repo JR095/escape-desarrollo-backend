@@ -5,45 +5,71 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Search_history;
 use App\Models\Company;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 
 class SearchController extends Controller
 {
-    
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'search_term' => 'required|string|max:255',
-            ]);
+        $request->validate([
+            'search_term' => 'required|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'company_id' => 'nullable|exists:companies,id'
+        ]);
 
-            $userId = auth()->check() ? auth()->id() : null;
+        $search = new Search_history();
+        $search->search_term = $request->input('search_term');
+        $search->searched_at = now();
+        $search->save();
 
-            Search_history::create([
-                'search_term' => $request->search_term,
-                'user_id' => $userId, 
-                'searched_at' => now(),
-            ]);
-
-            return response()->json(['message' => 'Search term stored successfully'], 200);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+        if ($request->user_id) {
+            $search->user_id = $request->user_id;
+        } elseif ($request->company_id) {
+            $search->company_id = $request->company_id;
+        } else {
+            return response()->json(['error' => 'User ID or Company ID is required'], 400);
         }
+
+        $search->save();
+
+        return response()->json(['message' => 'Search term stored successfully'], 200);
     }
 
-    public function recent()
+    public function recent(Request $request)
     {
-        $recentSearches = Search_history::orderBy('searched_at', 'desc')
-                      ->take(4)
-                      ->select('id', 'search_term')
-                      ->get();
+        $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'company_id' => 'nullable|exists:companies,id'
+        ]);
 
-    return response()->json($recentSearches);
+        $userId = $request->query('user_id');
+        $companyId = $request->query('company_id');
+
+        if ($userId) {
+            $recentSearches = Search_history::where('user_id', $userId)
+                ->orderBy('searched_at', 'desc')
+                ->take(4)
+                ->select('id', 'search_term')
+                ->get();
+        } elseif ($companyId) {
+            $recentSearches = Search_history::where('company_id', $companyId)
+                ->orderBy('searched_at', 'desc')
+                ->take(4)
+                ->select('id', 'search_term')
+                ->get();
+        }
+        else {
+            return response()->json([],404);
+        }
+
+        return response()->json($recentSearches);
     }
 
     public function getSuggestions(Request $request)
@@ -55,13 +81,13 @@ class SearchController extends Controller
         $query = $request->input('query');
 
         $companies = Company::where('name', 'like', '%' . $query . '%')
-                            ->take(5)
-                            ->pluck('name');
+            ->take(5)
+            ->pluck('name');
 
         return response()->json($companies);
     }
 
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -69,7 +95,7 @@ class SearchController extends Controller
     public function destroy($id)
     {
         $search = Search_history::find($id);
-    
+
         if ($search) {
             $search->delete();
             return response()->json(['message' => 'Búsqueda eliminada con éxito.'], 200);
@@ -78,7 +104,7 @@ class SearchController extends Controller
         }
     }
 
- 
+
 
 
 }

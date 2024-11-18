@@ -25,7 +25,8 @@ class TranslationController extends Controller
         }
 
         try {
-            $apiUrl = "http://localhost:5001/api/v1/$sourceLang/$targetLang/" . rawurlencode($text);
+            //$apiUrl = "http://localhost:5001/api/v1/$sourceLang/$targetLang/" . rawurlencode($text);
+            $apiUrl = "http://lingva.ml/api/v1/$sourceLang/$targetLang/" . rawurlencode($text);
             $response = @file_get_contents($apiUrl);
 
             if ($response === false) {

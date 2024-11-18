@@ -14,15 +14,18 @@ return new class extends Migration
         Schema::create('search_histories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->string('search_term');
             $table->timestamp('searched_at')->nullable(); 
             $table->timestamps();
 
             // Index
             $table->index('user_id');
+            $table->index('company_id');
 
             // Foreign key
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('set null');
         });
 
     }

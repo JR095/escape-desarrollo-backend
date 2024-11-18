@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Daily_post;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -72,7 +73,7 @@ class CompanyController extends Controller
         ->get();
 
         foreach ($companies as $company) {
-            $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+            $company->image = "https://myescape.online/imgs/".$company->image;
         }
         
         return $companies;
@@ -198,10 +199,60 @@ class CompanyController extends Controller
         ->where('companies.id', $id)
         ->get();
 
-        foreach ( $companies as $activity) {
-            $activity->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$activity->image;
+        $filename = $companies[0]->image;
+        $companies[0]->image = "https://myescape.online/imgs/".$filename;
+        $count = Daily_post::where('company_id', $id)->count();
+        $companies[0]->posts=$count;
+
+        return $companies;
+        
+    }
+
+    public function companyfollow( $user)
+    {
+        
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'followers.id as follow',
+            'companies.image'
+        )
+        ->Join('followers', 'companies.id', '=', 'followers.company_id')
+        ->where('followers.user_id', $user)
+        ->get();
+        foreach ($companies as $company) {
+            $company->image = "https://myescape.online/imgs/".$company->image;
         }
-    
+
+        return $companies;
+        
+    }
+
+    public function companyInfo($id, $user)
+    {
+        
+        $companies= Company::select(
+            'companies.id',
+            'companies.name',
+            'sub_categories.name as sub_category_id',
+            'companies.description',
+            'companies.image',
+            'companies.followers_count',
+            'followers.id as follow',
+        )
+        ->join('sub_categories', 'companies.sub_categories_id', '=', 'sub_categories.id')
+        ->leftJoin('followers', function($join) use ($user) {
+            $join->on('companies.id', '=', 'followers.company_id')
+                 ->where('followers.user_id', '=', $user);
+        })
+        ->where('companies.id', $id)
+        ->get();
+
+        $filename = $companies[0]->image;
+        $companies[0]->image = "https://myescape.online/imgs/".$filename;
+        $count = Daily_post::where('company_id', $id)->count();
+        $companies[0]->posts=$count;
+
         return $companies;
         
     }
@@ -220,9 +271,8 @@ class CompanyController extends Controller
     public function update(Request $request)
 {
     try {
-        $company = Auth::guard('company')->user();
-
         $validatedData = $request->validate([
+            'id' => 'required|exists:companies,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'canton' => 'required|exists:cantons,id', 
@@ -231,6 +281,8 @@ class CompanyController extends Controller
             'description' => 'required|string',
             'phone_number' => 'required',
         ]);
+
+        $company = Company::findOrFail($validatedData['id']);
 
         $imagePath = $company->image;
         if ($request->hasFile('image')) {
@@ -259,6 +311,31 @@ class CompanyController extends Controller
         return response()->json(['message' => 'Error updating company'], 500);
     }
 }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'id' => 'required|exists:companies,id', 
+                'old_password' => 'required',
+                'new_password' => 'required|min:6|confirmed',
+            ]);
+    
+            $user = Company::findOrFail($validatedData['id']);
+    
+            if (!Hash::check($validatedData['old_password'], $user->password)) {
+                return response()->json(['message' => 'The old password is incorrect.'], 400);
+            }
+    
+            $user->password = Hash::make($validatedData['new_password']);
+            $user->save();
+    
+            return response()->json(['message' => 'Password successfully changed.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error changing password: ' . $e->getMessage());
+            return response()->json(['message' => 'Error changing password.'], 500);
+        }
+    }
 
 
     /**
@@ -296,7 +373,7 @@ class CompanyController extends Controller
         ->get();
         
         foreach ($companies as $company) {
-            $company->image = "http://localhost/escape-desarrollo-backend/public/imgs/".$company->image;
+            $company->image = "https://myescape.online/imgs/".$company->image;
         }
     
         return response()->json($companies);

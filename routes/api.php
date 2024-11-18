@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisteredUserController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DailyPostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegisteredCompanyController;
+use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\LoginCompanyController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\DistrictController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\LikesController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ContactController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +39,8 @@ Route::middleware('auth:sanctum')->get('/company', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->post('/update-user', [UserController::class, 'update']);
 Route::post('/favorite', [UserController::class, 'favorite']);
+Route::post('/follower', [FollowerController::class, 'follower']);
+
 Route::get('/favorites/{id}', [UserController::class, 'getFavorites']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [LoginController::class, 'login']);
@@ -54,13 +59,17 @@ Route::get('/favorite/{idCategory}/{idSubCategory}/{idCanton}/{idDistrict}/{user
 
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/company/{id}/{user}', [CompanyController::class, 'companyShow']);
+Route::get('/companyinfo/{id}/{user}', [CompanyController::class, 'companyInfo']);
+
 Route::get('/subCategoryFilter/{id}', [CompanyController::class, 'subCategoryFilter']);
 Route::get('/categoryFilter/{id}', [CompanyController::class, 'categoryFilter']);
+Route::get('/following/{id}', [CompanyController::class, 'companyfollow']);
 
 Route::get('/filter/{$id_category}/{$id_subcategory}/{$id_canton}/{$id_district}', [CompanyController::class, 'categoryFilter']);
 
 Route::post('/update-user', [UserController::class, 'update']);
 Route::post('/change-password', [UserController::class, 'changePassword']);
+Route::post('/change-password-company', [CompanyController::class, 'changePassword']);
 
 Route::post('/create/post', [DailyPostController::class, 'store']);
 Route::get('/posts', [DailyPostController::class, 'index']);
@@ -118,3 +127,5 @@ Route::get('company/password/reset/{token}', function ($token) {
 Route::post('/company/reset/password', [CompanyController::class, 'reset'])->name('company.password.reset-company');
 
 Route::post('upload-image', [CompanyController::class, 'uploadImage']);
+
+Route::post('/contact', [ContactController::class, 'store']);

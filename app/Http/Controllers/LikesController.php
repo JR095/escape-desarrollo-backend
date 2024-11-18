@@ -12,16 +12,20 @@ class LikesController extends Controller
 
     public function toggleLike(Request $request, $postId)
     {
-        $user = Auth::user();
-        $company = Auth::guard('company')->user();
+        $userId = $request->input('user_id');
+        $companyId = $request->input('company_id');
 
-        $userId = $user ? $user->id : null;
-        $companyId = $company ? $company->id : null;
+        if (!$userId && !$companyId) {
+            return response()->json(['error' => 'User ID or Company ID is required'], 400);
+        }
 
         $like = Like::where('daily_post_id', $postId)
             ->where(function($query) use ($userId, $companyId) {
-                $query->where('user_id', $userId)
-                      ->orWhere('company_id', $companyId);
+                if ($userId) {
+                    $query->where('user_id', $userId);
+                } else if ($companyId) {
+                    $query->where('company_id', $companyId);
+                }
             })
             ->first();
 
