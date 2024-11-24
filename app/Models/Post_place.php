@@ -9,11 +9,11 @@ class Post_place extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['company_id', 'description', 'image', 'address', 'average_rating', 'aproximate_place'];
+    protected $fillable = ['company_id','average_rating', 'aproximate_place'];
 
     public function company()
     {
-        return $this->belongsTo(company_id::class, 'company_id');
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
     public function ratings()

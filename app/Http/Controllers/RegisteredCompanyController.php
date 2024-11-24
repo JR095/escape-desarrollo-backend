@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Models\Post_place;
 
 class RegisteredCompanyController extends Controller
 {
@@ -38,7 +39,7 @@ class RegisteredCompanyController extends Controller
             'sub_categories_id' => 'required',
             'email' => 'required|string|email|max:255|unique:users',
             'description' => 'required|string',
-            //'image' => 'required',
+            'image' => 'required',
             'canton_id' => 'required',
             'district_id' => 'required',
             'address' => 'required',
@@ -72,7 +73,7 @@ class RegisteredCompanyController extends Controller
             'sub_categories_id' => $request->sub_categories_id,
             'email' => $request->email,
             'description' => $request->description,
-            //'image' => $request->image,
+            'image' => $request->image,
             'canton_id' => $request->canton_id,
             'district_id' => $request->district_id,
             'address' => $request->address,
@@ -81,8 +82,15 @@ class RegisteredCompanyController extends Controller
             'whatsapp' => $whatsapp_url
         ]);
 
+        $post_place = Post_place::create([
+            'company_id' => $company->id,
+            'average_rating' => 0,
+            'approximate_price' => 0
+        ]);
+
         return response()->json(['message' => 'Company registered successfully', 'company' => $company], 201);
-    }
+
+    } 
 
     /**
      * Display the specified resource.

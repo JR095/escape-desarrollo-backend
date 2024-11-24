@@ -14,11 +14,8 @@ return new class extends Migration
         Schema::create('post_places', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id')->nullable();
-            $table->string('description');
-            $table->string('image');
-            $table->string('address')->nullable();
             $table->decimal('average_rating', 3, 2)->default(0); 
-            $table->integer('approximate_price');
+            $table->integer('approximate_price')->default(0);
             $table->timestamps();
 
             // Index

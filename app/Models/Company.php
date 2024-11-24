@@ -71,4 +71,9 @@ class Company extends Authenticatable
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
+    public function postPlace()
+    {
+    return $this->hasOne(Post_place::class, 'company_id');
+    }
 }
