@@ -25,13 +25,7 @@ return new class extends Migration
     {
        
 
-        if (Schema::hasTable('search_histories')) {
-            Schema::table('search_histories', function (Blueprint $table) {
-                $table->dropForeign(['user_id']);
-            });
-        }
-
-        Schema::dropIfExists('search_histories'); // Elimina la tabla
+      
         Schema::dropIfExists('users'); // Elimina la tabla
         Schema::dropIfExists('user_types');
     }
