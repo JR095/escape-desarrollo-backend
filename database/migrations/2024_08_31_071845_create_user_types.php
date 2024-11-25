@@ -23,6 +23,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('search_histories', function (Blueprint $table) {
+            $table->dropForeign(['user_id']); // Elimina la clave foránea
+        });
+        
+        Schema::dropIfExists('search_histories'); // Elimina la tabla
+        Schema::dropIfExists('users'); // Elimina la tabla
         Schema::dropIfExists('user_types');
     }
 };
