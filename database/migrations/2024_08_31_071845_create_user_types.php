@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::table('search_histories', function (Blueprint $table) {
             $table->dropForeign(['user_id']); // Elimina la clave foránea
         });
-        
+
         Schema::dropIfExists('search_histories'); // Elimina la tabla
         Schema::dropIfExists('users'); // Elimina la tabla
         Schema::dropIfExists('user_types');
