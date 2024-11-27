@@ -242,10 +242,11 @@ public function getFavorites($user_id)
                 Log::info('Password reset successfully for user: ' . $user->email);
             }
         );
-        Log::info('Password reset status: ' . $status);
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => __($status)], 200)
-            : response()->json(['message' => __($status)], 400);
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('password.reset.success');
+        } else {
+            return redirect()->back()->withErrors(['email' => __($status)]);
+        }
     }
 
     public function showResetForm($token)

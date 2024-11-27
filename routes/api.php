@@ -129,3 +129,8 @@ Route::post('/company/reset/password', [CompanyController::class, 'reset'])->nam
 Route::post('upload-image', [CompanyController::class, 'uploadImage']);
 
 Route::post('/contact', [ContactController::class, 'store']);
+
+Route::get('/password-reset-success', function () {
+    return view('auth.password_reset_success');
+})->name('password.reset.success');
+
