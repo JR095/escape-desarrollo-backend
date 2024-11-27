@@ -8,7 +8,7 @@
 <body class="bg-blue-100 min-h-screen flex items-center justify-center">
     <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 class="text-sky-500 text-2xl font-bold mb-6 text-center">Reset Password</h2>
-        <form method="POST" action="{{ url('https://myescape.online/api/reset/password') }}" class="space-y-4">
+        <form method="POST" action="{{ url('https://mediacionvirtual.ucr.ac.cr') }}" class="space-y-4">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
             <div>
