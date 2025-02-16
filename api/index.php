@@ -1,6 +1,6 @@
 <?php
 
-require DIR . '/../public/index.php';
-require DIR . '/../routes/api.php';
-require DIR . '/../routes/web.php';
-require DIR . '/../routes/console.php';
+require __DIR__ . '/../public/index.php';
+require __DIR__ . '/../routes/api.php';
+require __DIR__ . '/../routes/web.php';
+require __DIR__ . '/../routes/console.php';
